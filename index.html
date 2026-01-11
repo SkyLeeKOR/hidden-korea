@@ -37,40 +37,43 @@
         /* [NEW! 리얼 지도 컨테이너] */
         .korea-svg-container {
             width: 100%;
-            max-width: 500px; /* 지도 크기 */
+            max-width: 550px; /* 지도 크기 */
             margin-bottom: 30px;
-            /* 지도가 화면 중앙에 오도록 */
             display: flex; justify-content: center;
+            /* SVG 내 텍스트 스타일 */
+            font-family: 'Apple SD Gothic Neo', sans-serif;
+            font-weight: 800;
+            text-anchor: middle; /* 텍스트 중앙 정렬 */
+            fill: white; /* 텍스트 색상 */
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5); /* 텍스트 그림자 */
+            pointer-events: none; /* 텍스트가 클릭 이벤트를 가로채지 않게 함 */
         }
 
         /* [지도 조각(Path) 스타일] */
         .map-region {
             stroke: #ffffff;      /* 흰색 테두리 */
-            stroke-width: 2px;
+            stroke-width: 1px;    /* 테두리 두께 얇게 */
             cursor: pointer;
             transition: all 0.3s ease;
         }
 
-        /* [호버 효과] 마우스 올리면 둥실 떠오름 */
+        /* [호버 효과] */
         .map-region:hover {
             opacity: 0.9;
-            transform: translateY(-5px) scale(1.02); /* 살짝 확대되며 위로 */
-            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3)); /* 그림자 생성 */
+            transform: translateY(-3px) scale(1.01); 
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.2));
             z-index: 100;
+            stroke-width: 2px; /* 호버 시 테두리 강조 */
         }
-
-        /* [지역별 색상 - 파스텔톤] */
-        .fill-gw { fill: #2ecc71; } /* 강원 - 초록 */
-        .fill-gg { fill: #95a5a6; } /* 경기 - 회색 */
-        .fill-se { fill: #34495e; stroke-width: 3px; } /* 서울 - 남색 (강조) */
-        .fill-cn { fill: #f1c40f; } /* 충남 - 노랑 */
-        .fill-cb { fill: #f39c12; } /* 충북 - 오렌지 */
-        .fill-gb { fill: #9b59b6; } /* 경북 - 보라 */
-        .fill-gn { fill: #3498db; } /* 경남 - 파랑 */
-        .fill-bs { fill: #2980b9; } /* 부산 - 진파랑 */
-        .fill-jb { fill: #e67e22; } /* 전북 - 주황 */
-        .fill-jn { fill: #d35400; } /* 전남 - 붉은주황 */
-        .fill-jj { fill: #1abc9c; } /* 제주 - 민트 */
+        
+        /* [지역별 색상] */
+        .fill-gw { fill: #2ecc71; } .fill-gg { fill: #95a5a6; } .fill-se { fill: #34495e; }
+        .fill-cn { fill: #f1c40f; } .fill-cb { fill: #f39c12; } .fill-gb { fill: #9b59b6; }
+        .fill-gn { fill: #3498db; } .fill-bs { fill: #2980b9; } .fill-jb { fill: #e67e22; }
+        .fill-jn { fill: #d35400; } .fill-jj { fill: #1abc9c; }
+        
+        /* 서울 특별 강조 */
+        #path-se { stroke: #fff; stroke-width: 2px; z-index: 10; }
 
         
         /* [상세 페이지] */
@@ -148,28 +151,34 @@
 
             <div class="korea-svg-container">
                 <svg viewBox="0 0 500 700" xmlns="http://www.w3.org/2000/svg">
-                    <g transform="translate(10, 10)">
-                        <path class="map-region fill-gw" d="M250,50 L350,150 L380,250 L300,280 L250,250 L220,150 Z" onclick="loadDetail('Gangwon')"></path>
+                    <g transform="translate(0, 20) scale(0.95)">
+                        <g id="map-paths">
+                            <path id="path-gw" class="map-region fill-gw" d="M272,23 l44,48 l30,41 l-31,35 l-56,-10 l-35,-59 l14,-52 l34,-3 Z" onclick="loadDetail('Gangwon')"></path>
+                            <path id="path-gg" class="map-region fill-gg" d="M156,82 l50,23 l33,71 l-35,59 l-74,-30 l-50,-47 l76,-76 Z" onclick="loadDetail('Seoul')"></path>
+                            <path id="path-se" class="map-region fill-se" d="M195,135 l25,8 l10,28 l-28,5 l-15,-24 l8,-17 Z" onclick="loadDetail('Seoul')"></path>
+                            <path id="path-cb" class="map-region fill-cb" d="M239,176 l56,10 l31,27 l-8,59 l-38,21 l-53,-30 l-22,-64 l34,-23 Z" onclick="loadDetail('Chungcheong')"></path>
+                            <path id="path-cn" class="map-region fill-cn" d="M130,205 l74,30 l22,64 l-24,25 l-88,-12 l16,-107 Z" onclick="loadDetail('Chungcheong')"></path>
+                            <path id="path-gb" class="map-region fill-gb" d="M316,147 l31,-35 l82,74 l-5,133 l-55,22 l-43,-69 l38,-21 l8,-59 l-31,-27 l-25,-18 Z" onclick="loadDetail('Busan')"></path>
+                            <path id="path-jb" class="map-region fill-jb" d="M178,324 l53,30 l32,22 l-14,79 l-101,-8 l-18,-99 l24,-25 l24,1 Z" onclick="loadDetail('Jeolla')"></path>
+                            <path id="path-gn" class="map-region fill-gn" d="M263,376 l43,69 l83,-23 l-10,92 l-131,4 l14,-79 l-32,-22 l33,-41 Z" onclick="loadDetail('Busan')"></path>
+                            <path id="path-bs" class="map-region fill-bs" d="M389,422 l55,-22 l10,51 l-55,-6 l-10,-23 Z" onclick="loadDetail('Busan')"></path>
+                            <path id="path-jn" class="map-region fill-jn" d="M148,447 l101,8 l11,80 l-31,31 l-52,-2 l-19,34 l-65,-23 l12,-85 l43,-43 Z" onclick="loadDetail('Jeolla')"></path>
+                            <path id="path-jj" class="map-region fill-jj" d="M166,629 l83,-8 l13,23 l-35,18 l-69,-8 l8,-25 Z" onclick="loadDetail('Jeju')"></path>
+                        </g>
                         
-                        <path class="map-region fill-gg" d="M150,150 L220,150 L250,250 L220,300 L150,280 L100,200 Z" onclick="loadDetail('Seoul')"></path>
-                        
-                        <path class="map-region fill-se" d="M180,200 L210,200 L210,230 L180,230 Z" onclick="loadDetail('Seoul')"></path>
-                        
-                        <path class="map-region fill-cb" d="M220,300 L250,250 L300,280 L280,350 L230,350 Z" onclick="loadDetail('Chungcheong')"></path>
-                        
-                        <path class="map-region fill-cn" d="M150,280 L220,300 L230,350 L180,380 L100,320 Z" onclick="loadDetail('Chungcheong')"></path>
-                        
-                        <path class="map-region fill-gb" d="M300,280 L380,250 L400,400 L320,420 L280,350 Z" onclick="loadDetail('Busan')"></path>
-                        
-                        <path class="map-region fill-jb" d="M180,380 L230,350 L280,350 L260,450 L150,420 Z" onclick="loadDetail('Jeolla')"></path>
-                        
-                        <path class="map-region fill-gn" d="M260,450 L320,420 L400,400 L380,500 L280,500 Z" onclick="loadDetail('Busan')"></path>
-                        
-                        <path class="map-region fill-bs" d="M380,480 L400,480 L400,500 L380,500 Z" onclick="loadDetail('Busan')"></path>
-                        
-                        <path class="map-region fill-jn" d="M150,420 L260,450 L280,500 L250,550 L120,520 Z" onclick="loadDetail('Jeolla')"></path>
-                        
-                        <path class="map-region fill-jj" d="M150,600 L250,600 L240,650 L160,650 Z" onclick="loadDetail('Jeju')"></path>
+                        <g id="map-labels" style="font-size: 18px;">
+                            <text x="290" y="90">강원</text>
+                            <text x="170" y="125">경기</text>
+                            <text x="200" y="160" style="font-size: 14px;">서울</text>
+                            <text x="260" y="230">충북</text>
+                            <text x="150" y="260">충남</text>
+                            <text x="350" y="250">경북</text>
+                            <text x="190" y="390">전북</text>
+                            <text x="310" y="440">경남</text>
+                            <text x="410" y="440" style="font-size: 14px;">부산</text>
+                            <text x="180" y="510">전남</text>
+                            <text x="210" y="650">제주</text>
+                        </g>
                     </g>
                 </svg>
             </div>
