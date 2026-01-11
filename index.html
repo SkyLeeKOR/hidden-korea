@@ -3,157 +3,217 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hidden Korea - Travel Guide</title>
+    <title>Hidden Korea - Select Your Persona</title>
     <style>
+        /* [기본 설정] */
+        :root {
+            --primary-color: #333;
+            --accent-color: #0056b3;
+            --bg-color: #f4f7f6;
+        }
         body {
-            font-family: 'Apple SD Gothic Neo', sans-serif;
-            background-color: #f0f2f5;
-            display: flex;
-            justify_content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            text-align: center;
+            font-family: 'Segoe UI', 'Apple SD Gothic Neo', sans-serif;
+            background-color: var(--bg-color);
+            margin: 0; display: flex; justify_content: center;
+            min-height: 100vh; color: #333;
         }
-        .container {
-            background-color: white;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            max-width: 400px;
-            width: 90%;
-            transition: all 0.3s ease;
+        .app-container {
+            width: 100%; max-width: 480px;
+            background: white; min-height: 100vh;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+            display: flex; flex-direction: column;
+            position: relative;
         }
-        h1 { margin-bottom: 20px; color: #333; font-size: 22px; }
+
+        /* [화면 공통] */
+        .screen { padding: 30px 20px; flex: 1; display: flex; flex-direction: column; align-items: center; }
+        .hidden { display: none !important; }
         
-        /* 버튼 스타일 */
-        .btn {
-            display: block; width: 100%; padding: 15px; margin: 10px 0;
-            border: none; border-radius: 12px; font-size: 16px;
-            cursor: pointer; transition: 0.2s;
+        /* [언어 선택기] */
+        .lang-bar {
+            position: absolute; top: 15px; right: 20px; z-index: 10;
         }
-        .lang-btn { background-color: #e9ecef; color: #333; font-weight: bold;}
-        .lang-btn:hover { background-color: #ced4da; }
-
-        .persona-btn { background-color: #fff; border: 2px solid #eee; text-align: left; padding: 15px; }
-        .persona-btn:hover { border-color: #007bff; background-color: #f8f9fa; transform: translateY(-2px); }
-        .icon { font-size: 24px; margin-right: 10px; }
-        .desc { font-size: 12px; color: #666; display: block; margin-top: 5px; margin-left: 38px;}
-
-        /* 결과 화면 카드 스타일 */
-        .result-card {
-            background: #fff; border-radius: 15px; overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 20px; text-align: left;
+        .lang-btn {
+            background: rgba(255,255,255,0.8); border: 1px solid #ddd;
+            border-radius: 15px; padding: 5px 12px; font-size: 12px;
+            cursor: pointer; font-weight: bold; color: #555;
         }
-        .place-img { width: 100%; height: 180px; object-fit: cover; background-color: #ddd;}
-        .place-info { padding: 15px; }
-        .place-title { font-size: 18px; font-weight: bold; margin: 0 0 5px 0; }
-        .place-desc { font-size: 14px; color: #555; line-height: 1.4; }
-        .tag { display: inline-block; background: #e7f5ff; color: #007bff; padding: 4px 8px; border-radius: 4px; font-size: 12px; margin-top: 10px;}
+        .lang-btn.active { background: #333; color: white; border-color: #333; }
 
-        .hidden { display: none; }
-        .back-btn { background-color: #333; color: white; margin-top: 20px;}
+        /* [Screen 1: 홈] */
+        .home-logo { margin-top: 100px; font-size: 36px; font-weight: 900; letter-spacing: -1px; }
+        .home-desc { color: #666; text-align: center; margin-top: 10px; line-height: 1.5; font-size: 15px; }
+        .start-btn {
+            margin-top: 60px; width: 80%; padding: 18px;
+            background: linear-gradient(135deg, #333, #000);
+            color: white; border: none; border-radius: 50px;
+            font-size: 18px; font-weight: bold; cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            transition: transform 0.2s;
+        }
+        .start-btn:active { transform: scale(0.95); }
+
+        /* [Screen 2: 직업 선택] */
+        .job-header { text-align: center; margin-bottom: 25px; margin-top: 40px;}
+        .job-title { font-size: 24px; font-weight: bold; margin: 0; }
+        .job-subtitle { font-size: 14px; color: #888; margin-top: 5px; }
+        
+        .job-grid {
+            display: grid; grid-template-columns: 1fr 1fr; /* 2줄로 배치 */
+            gap: 15px; width: 100%;
+        }
+        .job-card {
+            background: white; border: 1px solid #eee;
+            border-radius: 16px; padding: 20px 15px;
+            text-align: center; cursor: pointer;
+            transition: all 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+        }
+        .job-card:hover {
+            border-color: var(--accent-color);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+        .job-icon { font-size: 32px; margin-bottom: 10px; display: block; }
+        .job-name { font-size: 15px; font-weight: bold; display: block; margin-bottom: 4px; color: #333; }
+        .job-desc { font-size: 11px; color: #888; display: block; line-height: 1.3; }
+
     </style>
 </head>
 <body>
 
-    <div class="container" id="main-container">
-        <div id="screen-language">
-            <h1>Select Language</h1>
-            <button class="btn lang-btn" onclick="selectLang('ko')">🇰🇷 한국어</button>
-            <button class="btn lang-btn" onclick="selectLang('en')">🇺🇸 English</button>
-            <button class="btn lang-btn" onclick="selectLang('jp')">🇯🇵 日本語</button>
+    <div class="app-container">
+        <div class="lang-bar">
+            <button class="lang-btn active" onclick="changeLang('en', this)">EN</button>
+            <button class="lang-btn" onclick="changeLang('kr', this)">KR</button>
+            <button class="lang-btn" onclick="changeLang('jp', this)">JP</button>
         </div>
 
-        <div id="screen-persona" class="hidden">
-            <h1 id="question-text">당신의 여행 스타일은?</h1>
-            <button class="btn persona-btn" onclick="showResult('Adventurer')">
-                <span class="icon">⚔️</span> <span id="txt-p1">모험가</span>
-                <span class="desc" id="desc-p1">활동적이고 새로운 도전</span>
-            </button>
-            <button class="btn persona-btn" onclick="showResult('Healer')">
-                <span class="icon">🍃</span> <span id="txt-p2">치유자</span>
-                <span class="desc" id="desc-p2">자연 속에서의 휴식</span>
-            </button>
-            <button class="btn persona-btn" onclick="showResult('Gourmet')">
-                <span class="icon">🍽️</span> <span id="txt-p3">미식가</span>
-                <span class="desc" id="desc-p3">맛있는 음식과 전통 시장</span>
+        <div id="screen-home" class="screen">
+            <h1 class="home-logo">Hidden Korea</h1>
+            <p class="home-desc" id="txt-home-desc">
+                Discover the real Korea.<br>
+                Beyond Seoul & Busan.
+            </p>
+            <button class="start-btn" onclick="goJobSelect()" id="txt-start">
+                Start Journey 🚀
             </button>
         </div>
 
-        <div id="screen-result" class="hidden">
-            <h1 id="result-title">추천 여행지</h1>
-            
-            <div class="result-card">
-                <img src="https://images.unsplash.com/photo-1548115184-bc6544d06a58?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="place-img" id="img-1">
-                <div class="place-info">
-                    <h3 class="place-title" id="title-1">추천 장소 이름</h3>
-                    <p class="place-desc" id="desc-1">여기에 장소 설명이 들어갑니다.</p>
-                    <span class="tag" id="tag-1">#Tag</span>
-                </div>
+        <div id="screen-job" class="screen hidden">
+            <div class="job-header">
+                <h2 class="job-title" id="txt-job-title">Select Your Class</h2>
+                <p class="job-subtitle" id="txt-job-sub">Choose your travel style</p>
             </div>
 
-            <button class="btn back-btn" onclick="location.reload()">🔄 다시하기 / Restart</button>
+            <div class="job-grid">
+                <div class="job-card" onclick="alert('Coming Soon: Nature Trip')">
+                    <span class="job-icon">🍃</span>
+                    <span class="job-name" id="job-1-name">The Druid</span>
+                    <span class="job-desc" id="job-1-desc">Hidden Nature & Healing</span>
+                </div>
+
+                <div class="job-card" onclick="alert('Go to 8-Province Food Map!')">
+                    <span class="job-icon">🍽️</span>
+                    <span class="job-name" id="job-2-name">Gourmet Hunter</span>
+                    <span class="job-desc" id="job-2-desc">Seasonal Food & Local Taste</span>
+                </div>
+
+                <div class="job-card" onclick="alert('Coming Soon: Photo Spots')">
+                    <span class="job-icon">📸</span>
+                    <span class="job-name" id="job-3-name">The Bard</span>
+                    <span class="job-desc" id="job-3-desc">Best Photo Spots & V-log</span>
+                </div>
+
+                <div class="job-card" onclick="alert('Coming Soon: Shopping')">
+                    <span class="job-icon">🛍️</span>
+                    <span class="job-name" id="job-4-name">The Merchant</span>
+                    <span class="job-desc" id="job-4-desc">Trends & Vintage Shopping</span>
+                </div>
+
+                <div class="job-card" onclick="alert('Coming Soon: K-Wave')">
+                    <span class="job-icon">🌟</span>
+                    <span class="job-name" id="job-5-name">Star Seeker</span>
+                    <span class="job-desc" id="job-5-desc">K-Pop & Drama Pilgrimage</span>
+                </div>
+
+                <div class="job-card" onclick="alert('Coming Soon: Local Life')">
+                    <span class="job-icon">⛺</span>
+                    <span class="job-name" id="job-6-name">The Nomad</span>
+                    <span class="job-desc" id="job-6-desc">Live like a local</span>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        // 데이터 베이스 (여기에 여행지 정보를 채워넣으면 됩니다!)
-        const db = {
-            Adventurer: {
-                title: "Yangyang Surfyy Beach",
-                desc: "The hottest surfing spot in Korea. Enjoy the freedom of the waves!",
-                tag: "#Surfing #Party",
-                img: "https://images.unsplash.com/photo-1502680390469-be75c86b636f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+        // 번역 데이터베이스
+        const textDB = {
+            en: {
+                homeDesc: "Discover the real Korea.<br>Beyond Seoul & Busan.",
+                startBtn: "Start Journey 🚀",
+                jobTitle: "Select Your Class",
+                jobSub: "Choose your travel style",
+                jobs: [
+                    {n: "The Druid", d: "Hidden Nature & Healing"},
+                    {n: "Gourmet Hunter", d: "Seasonal Food & Local Taste"},
+                    {n: "The Bard", d: "Best Photo Spots & V-log"},
+                    {n: "The Merchant", d: "Trends & Vintage Shopping"},
+                    {n: "Star Seeker", d: "K-Pop & Drama Pilgrimage"},
+                    {n: "The Nomad", d: "Live like a local"}
+                ]
             },
-            Healer: {
-                title: "Damyang Bamboo Forest",
-                desc: "Walk through the green bamboo forest and heal your mind.",
-                tag: "#Nature #Peace",
-                img: "https://images.unsplash.com/photo-1588661626248-18e00199709e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+            kr: {
+                homeDesc: "서울과 부산은 잊으세요.<br>당신만 모르는 진짜 한국.",
+                startBtn: "여행 시작하기 🚀",
+                jobTitle: "여행 직업 선택",
+                jobSub: "당신의 여행 스타일은?",
+                jobs: [
+                    {n: "더 드루이드", d: "숨겨진 자연과 힐링"},
+                    {n: "고메 헌터", d: "제철 음식과 노포 탐방"},
+                    {n: "더 바드", d: "인생샷 명소와 브이로그"},
+                    {n: "더 머천트", d: "트렌드와 빈티지 쇼핑"},
+                    {n: "스타 시커", d: "K-POP과 드라마 성지순례"},
+                    {n: "더 노마드", d: "현지인처럼 살아보기"}
+                ]
             },
-            Gourmet: {
-                title: "Jeonju Hanok Village",
-                desc: "The home of Bibimbap and traditional street foods.",
-                tag: "#Foodie #Traditional",
-                img: "https://images.unsplash.com/photo-1596632463878-181514757523?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+            jp: {
+                homeDesc: "ソウルと釜山は忘れて。<br>あなただけが知らない韓国。",
+                startBtn: "旅を始める 🚀",
+                jobTitle: "クラス選択",
+                jobSub: "あなたの旅行スタイルは？",
+                jobs: [
+                    {n: "ドルイド", d: "隠れた自然と癒し"},
+                    {n: "グルメハンター", d: "旬の食べ物と老舗巡り"},
+                    {n: "バード", d: "映えスポット & V-log"},
+                    {n: "マーチャント", d: "トレンド & ビンテージ"},
+                    {n: "スターシーカー", d: "K-POP & ドラマ聖地"},
+                    {n: "ノマド", d: "現地人のように暮らす"}
+                ]
             }
         };
 
-        const translations = {
-            ko: { q: "당신의 여행 스타일은?", p1:"모험가", d1:"활동적", p2:"치유자", d2:"휴식", p3:"미식가", d3:"맛집", res:"당신을 위한 추천" },
-            en: { q: "Your Travel Style?", p1:"Adventurer", d1:"Active", p2:"Healer", d2:"Relax", p3:"Gourmet", d3:"Food", res:"Recommended for you" },
-            jp: { q: "旅行スタイルは？", p1:"冒険家", d1:"アクティブ", p2:"ヒーラー", d2:"癒し", p3:"グルメ", d3:"美味しい", res:"おすすめの場所" }
-        };
+        function changeLang(lang, btn) {
+            // 버튼 활성화 스타일 변경
+            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
 
-        let currentLang = 'ko';
+            // 텍스트 변경
+            const t = textDB[lang];
+            document.getElementById('txt-home-desc').innerHTML = t.homeDesc;
+            document.getElementById('txt-start').innerText = t.startBtn;
+            document.getElementById('txt-job-title').innerText = t.jobTitle;
+            document.getElementById('txt-job-sub').innerText = t.jobSub;
 
-        function selectLang(lang) {
-            currentLang = lang;
-            document.getElementById('screen-language').classList.add('hidden');
-            document.getElementById('screen-persona').classList.remove('hidden');
-            
-            const t = translations[lang];
-            document.getElementById('question-text').innerText = t.q;
-            document.getElementById('txt-p1').innerText = t.p1;
-            document.getElementById('txt-p2').innerText = t.p2;
-            document.getElementById('txt-p3').innerText = t.p3;
+            // 직업 6개 텍스트 루프 돌면서 변경
+            for(let i=0; i<6; i++) {
+                document.getElementById(`job-${i+1}-name`).innerText = t.jobs[i].n;
+                document.getElementById(`job-${i+1}-desc`).innerText = t.jobs[i].d;
+            }
         }
 
-        function showResult(type) {
-            document.getElementById('screen-persona').classList.add('hidden');
-            document.getElementById('screen-result').classList.remove('hidden');
-
-            // 선택한 타입(모험가/치유자/미식가)에 맞는 데이터를 가져옵니다
-            const data = db[type];
-            const t = translations[currentLang];
-
-            // 화면에 내용을 뿌려줍니다
-            document.getElementById('result-title').innerText = t.res;
-            document.getElementById('title-1').innerText = data.title;
-            document.getElementById('desc-1').innerText = data.desc;
-            document.getElementById('tag-1').innerText = data.tag;
-            document.getElementById('img-1').src = data.img;
+        function goJobSelect() {
+            document.getElementById('screen-home').classList.add('hidden');
+            document.getElementById('screen-job').classList.remove('hidden');
         }
     </script>
 </body>
