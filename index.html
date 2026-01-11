@@ -7,75 +7,143 @@
     <style>
         /* [기본 설정] */
         :root {
-            --primary-color: #333;
-            --accent-color: #0056b3;
-            --bg-color: #f4f7f6;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-main: #333;
+            --text-sub: #666;
+            --accent: #222; /* 포인트 컬러 */
         }
+
         body {
-            font-family: 'Segoe UI', 'Apple SD Gothic Neo', sans-serif;
+            font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
             background-color: var(--bg-color);
-            margin: 0; display: flex; justify_content: center;
-            min-height: 100vh; color: #333;
+            margin: 0;
+            color: var(--text-main);
         }
+
+        /* 전체 컨테이너: 이제 480px 제한을 풀고 1200px까지 넓어집니다 */
         .app-container {
-            width: 100%; max-width: 480px;
-            background: white; min-height: 100vh;
-            box-shadow: 0 0 20px rgba(0,0,0,0.05);
-            display: flex; flex-direction: column;
+            width: 90%;
+            max-width: 1200px; /* PC 화면 최대 너비 */
+            margin: 0 auto; /* 중앙 정렬 */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
             position: relative;
         }
 
-        /* [화면 공통] */
-        .screen { padding: 30px 20px; flex: 1; display: flex; flex-direction: column; align-items: center; }
-        .hidden { display: none !important; }
+        /* 화면 공통 스타일 */
+        .screen {
+            padding: 40px 0;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center; /* 세로 중앙 정렬 추가 */
+        }
         
-        /* [언어 선택기] */
+        .hidden { display: none !important; }
+
+        /* [언어 선택기 - 우측 상단] */
         .lang-bar {
-            position: absolute; top: 15px; right: 20px; z-index: 10;
+            position: absolute;
+            top: 20px;
+            right: 0;
+            z-index: 10;
         }
         .lang-btn {
-            background: rgba(255,255,255,0.8); border: 1px solid #ddd;
-            border-radius: 15px; padding: 5px 12px; font-size: 12px;
-            cursor: pointer; font-weight: bold; color: #555;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #777;
+            margin-left: 5px;
+            transition: 0.2s;
         }
-        .lang-btn.active { background: #333; color: white; border-color: #333; }
+        .lang-btn:hover { background-color: #f1f1f1; }
+        .lang-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
 
-        /* [Screen 1: 홈] */
-        .home-logo { margin-top: 100px; font-size: 36px; font-weight: 900; letter-spacing: -1px; }
-        .home-desc { color: #666; text-align: center; margin-top: 10px; line-height: 1.5; font-size: 15px; }
+        /* [Screen 1: 홈 화면] */
+        .home-logo {
+            font-size: 4rem; /* 글자 엄청 크게 */
+            font-weight: 900;
+            margin-bottom: 20px;
+            letter-spacing: -2px;
+            color: #111;
+        }
+        .home-desc {
+            font-size: 1.5rem;
+            color: #555;
+            text-align: center;
+            margin-bottom: 60px;
+            line-height: 1.6;
+        }
         .start-btn {
-            margin-top: 60px; width: 80%; padding: 18px;
-            background: linear-gradient(135deg, #333, #000);
-            color: white; border: none; border-radius: 50px;
-            font-size: 18px; font-weight: bold; cursor: pointer;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
-            transition: transform 0.2s;
+            padding: 20px 60px;
+            background: #111;
+            color: white;
+            border: none;
+            border-radius: 100px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
-        .start-btn:active { transform: scale(0.95); }
+        .start-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
 
-        /* [Screen 2: 직업 선택] */
-        .job-header { text-align: center; margin-bottom: 25px; margin-top: 40px;}
-        .job-title { font-size: 24px; font-weight: bold; margin: 0; }
-        .job-subtitle { font-size: 14px; color: #888; margin-top: 5px; }
-        
+        /* [Screen 2: 직업 선택 화면] */
+        .job-header { text-align: center; margin-bottom: 50px; }
+        .job-title { font-size: 2.5rem; font-weight: 800; margin: 0; }
+        .job-subtitle { font-size: 1.2rem; color: #777; margin-top: 10px; }
+
+        /* 그리드 시스템 (반응형 핵심) */
         .job-grid {
-            display: grid; grid-template-columns: 1fr 1fr; /* 2줄로 배치 */
-            gap: 15px; width: 100%;
+            display: grid;
+            width: 100%;
+            gap: 20px;
+            /* 기본(PC): 3열로 배치 */
+            grid-template-columns: repeat(3, 1fr); 
         }
+
+        /* 모바일(태블릿)에서는 2열로 변경 */
+        @media (max-width: 768px) {
+            .job-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .home-logo { font-size: 2.5rem; }
+            .home-desc { font-size: 1.1rem; }
+        }
+
         .job-card {
-            background: white; border: 1px solid #eee;
-            border-radius: 16px; padding: 20px 15px;
-            text-align: center; cursor: pointer;
-            transition: all 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            background: white;
+            border-radius: 20px;
+            padding: 40px 20px; /* 카드 내부 여백을 늘림 */
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border: 1px solid transparent;
+            height: 100%; /* 카드 높이 통일 */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
         .job-card:hover {
-            border-color: var(--accent-color);
-            transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+            transform: translateY(-10px); /* 둥실 떠오르는 효과 */
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            border-color: #ddd;
         }
-        .job-icon { font-size: 32px; margin-bottom: 10px; display: block; }
-        .job-name { font-size: 15px; font-weight: bold; display: block; margin-bottom: 4px; color: #333; }
-        .job-desc { font-size: 11px; color: #888; display: block; line-height: 1.3; }
+        
+        .job-icon { font-size: 48px; margin-bottom: 15px; display: block; }
+        .job-name { font-size: 1.5rem; font-weight: 800; color: #222; margin-bottom: 8px; display: block;}
+        .job-desc { font-size: 1rem; color: #888; line-height: 1.4; display: block;}
 
     </style>
 </head>
@@ -146,7 +214,7 @@
     </div>
 
     <script>
-        // 번역 데이터베이스
+        // 번역 데이터 (이전과 동일)
         const textDB = {
             en: {
                 homeDesc: "Discover the real Korea.<br>Beyond Seoul & Busan.",
@@ -193,18 +261,15 @@
         };
 
         function changeLang(lang, btn) {
-            // 버튼 활성화 스타일 변경
             document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
 
-            // 텍스트 변경
             const t = textDB[lang];
             document.getElementById('txt-home-desc').innerHTML = t.homeDesc;
             document.getElementById('txt-start').innerText = t.startBtn;
             document.getElementById('txt-job-title').innerText = t.jobTitle;
             document.getElementById('txt-job-sub').innerText = t.jobSub;
 
-            // 직업 6개 텍스트 루프 돌면서 변경
             for(let i=0; i<6; i++) {
                 document.getElementById(`job-${i+1}-name`).innerText = t.jobs[i].n;
                 document.getElementById(`job-${i+1}-desc`).innerText = t.jobs[i].d;
