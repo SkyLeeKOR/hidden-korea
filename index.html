@@ -11,7 +11,7 @@
     <style>
         /* [기본 설정] */
         :root { --bg-color: #f8f9fa; --primary: #222; --accent: #d32f2f; }
-        body { font-family: 'Apple SD Gothic Neo', sans-serif; background-color: var(--bg-color); margin: 0; color: var(--primary); }
+        body { font-family: 'Apple SD Gothic Neo', sans-serif; background-color: var(--bg-color); margin: 0; color: var(--primary); transition: background-color 0.5s; }
         .app-container { width: 90%; max-width: 1200px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; position: relative; }
         .screen { padding: 40px 0; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .hidden { display: none !important; }
@@ -34,75 +34,46 @@
         .card-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 10px; color: #333; }
         .card-desc { font-size: 1rem; color: #888; }
 
-        /* [NEW! 한국 블록 지도 - 리얼 쉐이프 에디션] */
-        .korea-map-container {
-            display: grid;
-            gap: 6px;
+        /* [NEW! 리얼 SVG 지도 스타일] */
+        .korea-svg-container {
             width: 100%;
-            max-width: 450px;
-            /* 5열 8행으로 더 세밀하게 쪼갬 */
-            grid-template-columns: repeat(5, 1fr);
-            grid-template-rows: repeat(8, 50px);
+            max-width: 550px; /* 지도 크기 조절 */
             margin-bottom: 30px;
-            perspective: 1000px; /* 3D 효과 준비 */
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.15)); /* 전체 지도 그림자 */
+        }
+        
+        /* 각 지역(path) 공통 스타일 */
+        .map-region {
+            stroke: #fff; /* 흰색 테두리 */
+            stroke-width: 2px;
+            stroke-linejoin: round;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            cursor: pointer;
         }
 
-        .map-block {
-            border: none; border-radius: 10px;
-            font-size: 0.95rem; font-weight: 800; color: white;
-            cursor: pointer; 
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* 쫀득한 애니메이션 */
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
-            padding: 5px;
-            background-size: cover;
-            background-position: center;
-            background-blend-mode: overlay; /* 이미지와 배경색 섞기 */
-            position: relative;
+        /* 호버 효과: 색상 변경 + 튀어오름 + 그림자 */
+        .map-region:hover {
+            fill: var(--accent) !important; /* 직업 테마색으로 변경 */
+            transform: translateY(-5px) scale(1.02); /* 살짝 위로 커지며 이동 */
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3));
+            z-index: 10;
         }
 
-        /* [핵심] 호버 시 프리뷰 효과 */
-        .map-block:hover {
-            transform: scale(1.6) translateY(-10px); /* 1.6배 확대 및 위로 부양 */
-            z-index: 100; /* 다른 블록보다 위로 */
-            box-shadow: 0 20px 30px rgba(0,0,0,0.3);
-            border: 2px solid white;
-            /* 배경 이미지는 JS로 주입됩니다 (평소엔 색상, 호버시 사진) */
-            color: white;
-            text-shadow: 0 2px 10px black;
-        }
+        /* 지역별 고유 색상 (요청하신 지도 느낌 반영) */
+        .fill-gw { fill: #76c7c0; } /* 강원 - 청록 */
+        .fill-gg { fill: #a569bd; } /* 경기 - 보라 */
+        .fill-se { fill: #34495e; stroke-width: 3px; z-index: 5; } /* 서울 - 진한 남색 (강조) */
+        .fill-cn { fill: #f39c12; } /* 충남 - 주황 */
+        .fill-cb { fill: #f1c40f; } /* 충북 - 노랑 */
+        .fill-gb { fill: #8e44ad; } /* 경북 - 진보라 */
+        .fill-gn { fill: #e74c3c; } /* 경남 - 빨강 */
+        .fill-jb { fill: #d35400; } /* 전북 - 진주황 */
+        .fill-jn { fill: #c0392b; } /* 전남 - 진빨강 */
+        .fill-bs { fill: #2980b9; } /* 부산 - 파랑 */
+        .fill-jj { fill: #1abc9c; } /* 제주 - 민트 */
 
-        /* 지역별 좌표 (그리드 에어리어) - 한반도 모양 최적화 */
-        /* 경기: 왼쪽 상단 덩어리 */
-        .area-gg { grid-column: 1 / 3; grid-row: 1 / 3; background-color: #7f8c8d; border-radius: 20px 0 0 0;}
-        /* 강원: 오른쪽 상단 넓게 */
-        .area-gw { grid-column: 3 / 6; grid-row: 1 / 3; background-color: #27ae60; border-radius: 0 20px 20px 0;}
-        /* 서울: 경기 속에 쏙 */
-        .area-se { grid-column: 2 / 3; grid-row: 2 / 3; background-color: #2c3e50; border: 2px solid white; z-index: 10; box-shadow: 0 0 10px rgba(0,0,0,0.3); border-radius: 50%;}
         
-        /* 충남: 서해안 튀어나옴 */
-        .area-cn { grid-column: 1 / 2; grid-row: 3 / 5; background-color: #f1c40f; color:#333; text-shadow: none; border-radius: 20px 0 0 20px;}
-        /* 충북: 내륙 */
-        .area-cb { grid-column: 2 / 4; grid-row: 3 / 4; background-color: #e67e22; }
-        /* 경북: 동해안 넓게 */
-        .area-gb { grid-column: 4 / 6; grid-row: 3 / 6; background-color: #8e44ad; }
-        
-        /* 전북 */
-        .area-jb { grid-column: 1 / 3; grid-row: 5 / 6; background-color: #d35400; }
-        /* 경남 */
-        .area-gn { grid-column: 3 / 5; grid-row: 5 / 7; background-color: #2980b9; }
-        /* 부산: 경남 아래 끝 */
-        .area-bs { grid-column: 5 / 6; grid-row: 5 / 7; background-color: #0d47a1; border-radius: 0 0 20px 0;}
-        
-        /* 전남: 남서해안 복잡함 */
-        .area-jn { grid-column: 1 / 3; grid-row: 6 / 8; background-color: #c0392b; border-radius: 0 0 0 20px;}
-        
-        /* 제주: 바다 건너 */
-        .area-jj { grid-column: 2 / 4; grid-row: 8 / 9; background-color: #16a085; border-radius: 20px; margin-top: 10px;}
-
-
-        /* [상세 페이지 등 나머지 스타일은 유지] */
+        /* [상세 페이지] */
         .detail-container { width: 100%; max-width: 800px; display: flex; flex-direction: column; align-items: center; }
         .detail-header-img { width: 100%; height: 350px; object-fit: cover; border-radius: 25px; margin-bottom: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); background-color: #eee; }
         .info-section { background: white; border-radius: 20px; padding: 30px; width: 100%; box-sizing: border-box; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border-top: 5px solid var(--accent); }
@@ -113,7 +84,8 @@
 
         #map { height: 300px; width: 100%; border-radius: 15px; margin-bottom: 15px; z-index: 1;}
         .taxi-btn { width: 100%; padding: 15px; background-color: var(--accent); color: white; border: none; border-radius: 15px; font-weight: bold; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: 0.2s;}
-        
+        .taxi-btn:hover { filter: brightness(1.1); transform: scale(1.02); }
+
         /* [택시 모달] */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 999; display: flex; justify-content: center; align-items: center; }
         .taxi-card-modal { background: white; padding: 40px 20px; border-radius: 20px; width: 90%; max-width: 400px; text-align: center; animation: popUp 0.3s ease; }
@@ -127,6 +99,7 @@
         .star-select { padding: 12px; border-radius: 10px; border: 1px solid #ddd; font-size: 1rem; cursor: pointer;}
         .comment-input { flex: 1; padding: 12px; border-radius: 10px; border: 1px solid #ddd; font-size: 1rem;}
         .post-btn { background: #333; color: white; border: none; padding: 0 25px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.2s;}
+        .post-btn:hover { background: black; }
         .review-list { list-style: none; padding: 0; margin: 0; }
         .review-item { background: white; border-bottom: 1px solid #eee; padding: 20px 0; display: flex; flex-direction: column; }
         .r-header { display: flex; justify-content: space-between; margin-bottom: 8px; align-items: center;}
@@ -172,23 +145,30 @@
 
         <div id="screen-food-map" class="screen hidden">
             <h2 class="header-title" id="t-map-title">Select Region</h2>
-            <p class="header-sub" id="t-map-sub">Hover to preview!</p>
+            <p class="header-sub" id="t-map-sub">Click on the map to explore!</p>
 
-            <div class="korea-map-container">
-                <button class="map-block area-gg" onmouseover="showPreview(this, 'Seoul')" onmouseout="hidePreview(this, '')" onclick="loadDetail('Seoul')">Gyeonggi</button>
-                <button class="map-block area-gw" onmouseover="showPreview(this, 'Gangwon')" onmouseout="hidePreview(this, '')" onclick="loadDetail('Gangwon')">Gangwon</button>
-                <button class="map-block area-se" onmouseover="showPreview(this, 'Seoul')" onmouseout="hidePreview(this, '')" onclick="loadDetail('Seoul')">Seoul</button>
-                
-                <button class="map-block area-cn" onmouseover="showPreview(this, 'Chungcheong')" onmouseout="hidePreview(this, '')" onclick="loadDetail('Chungcheong')">Chungnam</button>
-                <button class="map-block area-cb" onmouseover="showPreview(this, 'Chungcheong')" onmouseout="hidePreview(this, '')" onclick="loadDetail('Chungcheong')">Chungbuk</button>
-                <button class="map-block area-gb" onmouseover="showPreview(this, 'Busan')" onmouseout="hidePreview(this, '')" onclick="loadDetail('Busan')">Gyeongbuk</button>
-                
-                <button class="map-block area-jb" onmouseover="showPreview(this, 'Jeolla')" onmouseout="hidePreview(this, '')" onclick="loadDetail('Jeolla')">Jeonbuk</button>
-                <button class="map-block area-gn" onmouseover="showPreview(this, 'Busan')" onmouseout="hidePreview(this, '')" onclick="loadDetail('Busan')">Gyeongnam</button>
-                <button class="map-block area-bs" onmouseover="showPreview(this, 'Busan')" onmouseout="hidePreview(this, '')" onclick="loadDetail('Busan')">Busan</button>
-                
-                <button class="map-block area-jn" onmouseover="showPreview(this, 'Jeolla')" onmouseout="hidePreview(this, '')" onclick="loadDetail('Jeolla')">Jeonnam</button>
-                <button class="map-block area-jj" onmouseover="showPreview(this, 'Jeju')" onmouseout="hidePreview(this, '')" onclick="loadDetail('Jeju')">Jeju</button>
+            <div class="korea-svg-container">
+                <svg version="1.1" id="korea-map-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 540 840" style="enable-background:new 0 0 540 840;" xml:space="preserve">
+                    <g id="regions">
+                        <path id="path-gw" class="map-region fill-gw" d="M339.6,187.1l-7.2-10l-5.7,2.1l-8.2-6.7l-4.6,0.5l-11.8-7.7l1.5-9.3l-6.7-6.2l0.5-10.8l-5.1-4.1l3.6-14.9l-6.7-6.2l4.1-9.8l-5.1-9.3L302.5,91l7.7-17l13.9-1.5l14.4,10.8l7.2,2.6l9.3-3.6l7.7,3.1l8.2,14.4l-1.5,5.1l4.6,6.7l-5.7,11.3l6.2,13.4l-3.6,7.2l8.7,7.7l-5.1,18.5l7.7,14.9l-2.6,11.8l11.3,23.7l-5.7,7.7l10.8,13.9l-6.7,12.9l7.7,10.8l-4.1,8.2l4.1,6.2l-12.3,7.7l2.6,8.7l-7.7,5.1l3.6,10.3l-5.7,8.7l3.1,6.2l-12.3,9.8l-7.7-3.6l-11.3,9.8l-10.8-5.7l-9.3,4.6L293.9,312l-11.8-7.7l-0.5-6.2l-14.4-10.3l5.7-12.3l-4.1-8.7l9.3-11.3l11.3-1.5l7.2-14.4l12.9-7.7l-1.5-10.3L339.6,187.1z" onclick="loadDetail('Gangwon')"/>
+                        <path id="path-gg" class="map-region fill-gg" d="M197.8,269.9l-8.7,3.6l-6.7-7.2l-8.7,3.6l-10.3-7.2l-9.3,2.6l-14.9-10.8l-5.1,5.7l-5.7-2.6l-5.1,5.1l-6.7-3.1l-6.2,5.7l-2.6-2.1l-7.2,7.7l-13.4-3.1l-5.1,3.6l0.5-5.7l8.2-9.3l-6.7-5.7l3.6-12.3l8.7-5.1l-1.5-8.2l8.2-5.7l2.1-13.4l6.7-7.2l-3.6-7.7l9.3-5.1l-3.6-9.8l6.7-3.6l-0.5-7.7l6.2-2.6l2.6-9.8l12.9,2.1l12.3-11.3l8.7,2.6l3.6-6.2l7.2-0.5l7.7,7.7l7.2-2.1l6.2,12.3l14.4,10.3l0.5,6.2l11.8,7.7l34.1,3.1l9.3-4.6l10.8,5.7l11.3-9.8l7.7,3.6l12.3-9.8l-3.1-6.2l5.7-8.7l-3.6-10.3l7.7-5.1l-2.6-8.7l12.3-7.7l-4.1-6.2l4.1-8.2l-7.7-10.8l6.7-12.9l-10.8-13.9l5.7-7.7l-11.3-23.7l2.6-11.8l-7.7-14.9l5.1-18.5l-8.7-7.7l3.6-7.2l-6.2-13.4l5.7-11.3l-4.6-6.7l1.5-5.1l-8.2-14.4l-7.7-3.1l-9.3,3.6l-7.2-2.6l-14.4-10.8l-13.9,1.5l-7.7,17l-14.4,4.6l5.1,9.3l-4.1,9.8l6.7,6.2l-3.6,14.9l5.1,4.1l-0.5,10.8l6.7,6.2l-1.5,9.3l11.8,7.7l4.6-0.5l8.2,6.7l5.7-2.1l7.2,10l-31.5,34.4l1.5,10.3l-12.9,7.7l-7.2,14.4l-11.3,1.5l-9.3,11.3l4.1,8.7l-5.7,12.3L197.8,269.9z M199.9,199.5l-5.7,4.6l-14.4-6.7l-2.6,14.9l11.3,11.8l12.9,3.6l8.2-9.3l-3.6-15.9L199.9,199.5z" onclick="loadDetail('Seoul')"/>
+                        <path id="path-se" class="map-region fill-se" d="M199.9,199.5l6.2,3.1l3.6,15.9l-8.2,9.3l-12.9-3.6l-11.3-11.8l2.6-14.9l14.4,6.7L199.9,199.5z" onclick="loadDetail('Seoul')"/>
+                        
+                        <path id="path-cn" class="map-region fill-cn" d="M78.1,307.4l5.1,3.6l13.4-11.8l9.3,2.1l6.7-13.4l7.2,4.1l8.7-13.4l-2.6-2.1l6.2-5.7l6.7,3.1l5.1-5.1l5.7,2.6l5.1-5.7l14.9,10.8l9.3-2.6l10.3,7.2l8.7-3.6l6.7,7.2l8.7-3.6l10.8,8.7l5.7-3.6l2.6,8.7l11.3-0.5l-5.7,8.7l7.7,6.7l-5.1,9.3l11.3,5.7l2.6,11.8l-4.1,12.9l-6.7-1.5l-7.7,13.9l-12.3,7.7l2.1,12.9l-15.4,10.8l0.5,6.2l-8.2,4.1l-10.3-8.7l-7.7,10.8l-12.9,5.7l-3.6-5.1l-12.3,1.5l-4.1-6.7l-8.2,1.5l-3.6-7.7l-12.9,3.6l-7.7-9.8l-14.4,7.2l-5.1-4.6l-14.4,8.2l-4.1-12.3l7.2-7.7l-5.1-15.4l9.3-2.1l4.6-13.9l-13.9-4.6l2.6-11.8l-13.9,3.6l3.6-13.4l9.8,3.1l1.5-10.3L78.1,307.4z" onclick="loadDetail('Chungcheong')"/>
+                        <path id="path-cb" class="map-region fill-cb" d="M282.1,416.9l-12.3-7.7l7.7-13.9l6.7,1.5l4.1-12.9l-2.6-11.8l-11.3-5.7l5.1-9.3l-7.7-6.7l5.7-8.7l-11.3,0.5l-2.6-8.7l-5.7,3.6l-10.8-8.7l8.7-16.4l34.1,3.1l9.3-4.6l10.8,5.7l11.3-9.8l7.7,3.6l12.3-9.8l-3.1-6.2l5.7-8.7l-3.6-10.3l7.7-5.1l-2.6-8.7l12.3-7.7l4.6,11.8l-9.8,11.3l5.7,11.8l-3.6,10.3l9.3,6.7l-4.6,17.5l10.8,6.2l1.5,8.7l-13.4,18.5l-9.8,2.6l-7.7,12.9l6.2,5.1l-3.6,13.4l-12.3-2.1l-9.8,11.8l-13.9-3.6l-5.1,13.9l-8.7-3.6l-9.8,11.3L282.1,416.9z" onclick="loadDetail('Chungcheong')"/>
+                        
+                        <path id="path-gb" class="map-region fill-gb" d="M409.1,456.5l-12.3,13.9l-9.8-3.1l-8.2,9.3l-13.9-3.1l-2.1-13.4l-7.2,2.6l-5.7-7.7l-9.8,1.5l-8.2-11.8l7.7-10.3l-7.7-14.4l-12.9,5.1l-7.2-10.3l-9.8,11.8l12.3,2.1l3.6-13.4l-6.2-5.1l7.7-12.9l9.8-2.6l13.4-18.5l-1.5-8.7l-10.8-6.2l4.6-17.5l-9.3-6.7l3.6-10.3l-5.7-11.8l9.8-11.3l-4.6-11.8l4.1,6.2l12.3-7.7l2.6,8.7l-7.7,5.1l3.6,10.3l-5.7,8.7l3.1,6.2l-12.3,9.8l-7.7-3.6l-11.3,9.8l-10.8-5.7l-9.3,4.6l-34.1-3.1l-11.8-7.7l-0.5-6.2l-14.4-10.3l-6.2-12.3l-7.2,2.1l-7.7-7.7l-7.2,0.5l-3.6,6.2l-8.7-2.6l-12.3,11.3l-12.9-2.1l-2.6,9.8l-6.2,2.6l0.5,7.7l-6.7,3.6l3.6,9.8l-9.3,5.1l3.6,7.7l-6.7,7.2l-2.1,13.4l-8.2,5.7l1.5,8.2l-8.7,5.1l-3.6,12.3l6.7,5.7l-8.2,9.3l-0.5,5.7l5.1-3.6l13.4,3.1l7.2-7.7l2.6,2.1l-8.7,16.4l10.8,8.7l5.7-3.6l2.6,8.7l11.3-0.5l-5.7,8.7l7.7,6.7l-5.1,9.3l11.3,5.7l2.6,11.8l-4.1,12.9l-6.7-1.5l-7.7,13.9l-12.3,7.7l2.1,12.9l-15.4,10.8l0.5,6.2l-8.2,4.1l-10.3-8.7l-7.7,10.8l-12.9,5.7l-3.6-5.1l-12.3,1.5l-4.1-6.7l-8.2,1.5l-3.6-7.7l-12.9,3.6l-7.7-9.8l-14.4,7.2l-5.1-4.6l-14.4,8.2l-4.1-12.3l7.2-7.7l-5.1-15.4l9.3-2.1l4.6-13.9l-13.9-4.6l2.6-11.8l-13.9,3.6l3.6-13.4l9.8,3.1l1.5-10.3l21.1-9.8l5.1,3.6l13.4-11.8l9.3,2.1l6.7-13.4l7.2,4.1l8.7-13.4l-2.6-2.1l6.2-5.7l6.7,3.1l5.1-5.1l5.7,2.6l5.1-5.7l14.9,10.8l9.3-2.6l10.3,7.2l8.7-3.6l6.7,7.2l8.7-3.6l10.8,8.7l5.7-3.6l2.6,8.7l11.3-0.5l-5.7,8.7l7.7,6.7l-5.1,9.3l11.3,5.7l2.6,11.8l-4.1,12.9l-6.7-1.5l-7.7,13.9l-12.3,7.7l2.1,12.9l-15.4,10.8l0.5,6.2l-8.2,4.1l-10.3-8.7l-7.7,10.8l-12.9,5.7l-3.6-5.1l-12.3,1.5l-4.1-6.7l-8.2,1.5l-3.6-7.7l-12.9,3.6l-7.7-9.8l-14.4,7.2l-5.1-4.6l-14.4,8.2l-4.1-12.3l7.2-7.7l-5.1-15.4l9.3-2.1l4.6-13.9l-13.9-4.6l2.6-11.8l-13.9,3.6l3.6-13.4l9.8,3.1l1.5-10.3l21.1-9.8l5.1,3.6l13.4-11.8l9.3,2.1l6.7-13.4l7.2,4.1l8.7-13.4L409.1,456.5z" onclick="loadDetail('Busan')"/>
+                        
+                        <path id="path-jb" class="map-region fill-jb" d="M120.8,501.2l-13.9,6.7l-10.3-9.8l-12.9,3.6l-9.3-11.8l-13.4,2.6l-2.6-13.4l-15.4,3.1l-6.7-7.7l11.8-12.3l-3.6-10.3l9.3-6.2l-6.7-16.4l12.3-9.8l-4.6-11.8l13.9-8.2l5.1,4.6l14.4-7.2l7.7,9.8l12.9-3.6l3.6,7.7l8.2-1.5l4.1,6.7l12.3-1.5l3.6,5.1l12.9-5.7l7.7-10.8l10.3,8.7l8.2-4.1l-0.5-6.2l15.4-10.8l-2.1-12.9l12.3-7.7l-0.5,18.5l9.8-11.3l8.7,3.6l5.1-13.9l13.9,3.6l7.2,10.3l12.9-5.1l7.7,14.4l-7.7,10.3l8.2,11.8l9.8-1.5l5.7,7.7l7.2-2.6l2.1,13.4l13.9,3.1l8.2-9.3l9.8,3.1l12.3-13.9l2.1,13.4l-6.2,8.7l7.7,10.8l-3.1,11.3l-9.3,6.7l5.1,11.3l-10.3,10.3l7.7,17l-15.9,13.9l-9.3-4.6l-8.2,9.3l-11.3-1.5l-4.6,12.9l-18.5,4.6l1.5,13.9l-8.7,3.1l-10.3-9.8l-9.8,4.6l-7.2-10.8l-12.3,6.7l-4.6-7.2l-8.2,3.6l-6.2-10.3l-10.8,2.6L120.8,501.2z" onclick="loadDetail('Jeolla')"/>
+                        
+                        <path id="path-gn" class="map-region fill-gn" d="M309.9,626.7l-1.5-13.9l18.5-4.6l4.6-12.9l11.3,1.5l8.2-9.3l9.3,4.6l15.9-13.9l-7.7-17l10.3-10.3l-5.1-11.3l9.3-6.7l3.1-11.3l-7.7-10.8l6.2-8.7l-2.1-13.4l18,15.9l14.4-4.6l11.3,10.8l-10.3,11.8l5.7,6.2l-13.4,22.1l18,15.4l13.4-4.6l6.2,9.3l-5.1,8.2l18,9.3l-6.7,25.7l-23.1-4.6l-4.6,14.4l-12.9-5.7l-5.7,8.2l-11.8-3.6l-4.6,13.4l-12.9,1.5l-4.1-11.3l-8.2-2.1l-11.3,9.8l-10.8-8.7l1.5-13.9l-9.3,2.6l-7.2-11.8l-8.2,4.6L309.9,626.7z" onclick="loadDetail('Busan')"/>
+                        <path id="path-bs" class="map-region fill-bs" d="M422.1,656l5.1-8.2l-6.2-9.3l-13.4,4.6l-18-15.4l13.4-22.1l-5.7-6.2l10.3-11.8l-11.3-10.8l-14.4,4.6l-18-15.9l22.6,20.1l9.3,3.6l6.2,11.8l14.9-2.6l8.2,9.3l11.8-1.5l6.7,13.4l12.9,3.6l-3.6,13.4l5.7,5.1l-9.3,14.9L422.1,656z" onclick="loadDetail('Busan')"/>
+
+                        <path id="path-jn" class="map-region fill-jn" d="M145,680.7l-14.4,8.7l2.1,10.3l-11.3,6.2l3.1,12.3l-25.2,14.9l-7.7-9.3l-7.2,5.1l-5.1-10.8l-9.8,2.6l-3.6-11.8l-8.7,3.1l-2.6-10.3l-12.9,4.6l-2.6-12.9l-8.7-2.1l4.1-18l-9.8-11.3l13.9-11.8l0.5-11.3l-11.3-7.7l8.7-10.3l-6.7-14.4l10.8-8.7l-2.1-8.2l9.3,1.5l6.7-11.3l9.3,4.1l10.8-2.6l6.2,10.3l8.2-3.6l4.6,7.2l12.3-6.7l7.2,10.8l9.8-4.6l10.3,9.8l8.7-3.1l8.2,4.6l7.2,11.8l9.3-2.6l-1.5,13.9l10.8,8.7l11.3-9.8l8.2,2.1l4.1,11.3l12.9-1.5l4.6-13.4l11.8,3.6l5.7-8.2l12.9,5.7l4.6-14.4l23.1,4.6l-7.7,30.3l-9.3,11.8l7.2,6.7l-23.1,4.1l-3.1,10.8l-24.2-1.5l-4.6,10.3l-10.8-5.7l-7.7,7.2l-11.3-6.7l-6.7,8.7l-13.4-4.1l-5.7,10.3l-16.4-11.8l-5.7,12.3l-8.7-7.7l-7.7,8.2l-10.3-11.8L145,680.7z" onclick="loadDetail('Jeolla')"/>
+                        
+                        <path id="path-jj" class="map-region fill-jj" d="M211.7,826.7l-21.1-6.2l-14.4,3.1l-10.3-8.7l5.1-13.4l12.3-4.6l18.5,3.1l20.1-7.7l14.4,6.2l10.8-3.1l11.3,8.7l-5.7,10.8l-14.4,5.7L211.7,826.7z" onclick="loadDetail('Jeju')"/>
+                    </g>
+                </svg>
             </div>
 
             <button onclick="goScreen('job')" style="margin-top:40px; padding: 12px 30px; background:none; border:2px solid #ddd; border-radius:30px; cursor:pointer; font-weight:bold; color:#777;">⬅ Back</button>
@@ -294,17 +274,17 @@
 
         const uiDB = {
             en: { home:"Discover the real Korea.", start:"Start Journey 🚀", jobT:"Select Your Class", jobS:"Choose your travel style", 
-                  mapT:"Select Region", mapS:"Hover to see preview!", infoT:"📋 Travel Info & Budget", revT:"⭐ Traveler Reviews",
+                  mapT:"Select Region", mapS:"Click on the map to explore!", infoT:"📋 Travel Info & Budget", revT:"⭐ Traveler Reviews",
                   l_food:"Seasonal Food", l_trans:"Transport", l_bud:"Budget", place:"Write a review...",
                   j1:"The Druid", d1:"Nature", j2:"Gourmet Hunter", d2:"Food Trip", j3:"The Bard", d3:"Photo Spots", j4:"The Merchant", d4:"Shopping", j5:"Star Seeker", d5:"K-Wave", j6:"The Nomad", d6:"Local Life",
                   loc:"📍 Location & Taxi", taxi:"Show Address to Driver" },
             kr: { home:"당신만 모르는 진짜 한국.", start:"여행 시작하기 🚀", jobT:"여행 직업 선택", jobS:"당신의 여행 스타일은?", 
-                  mapT:"지역 선택", mapS:"마우스를 올려서 미리보기!", infoT:"📋 여행 정보 및 경비", revT:"⭐ 여행자 실시간 리뷰",
+                  mapT:"지역 선택", mapS:"지도를 클릭해서 탐험을 시작하세요!", infoT:"📋 여행 정보 및 경비", revT:"⭐ 여행자 실시간 리뷰",
                   l_food:"제철 음식", l_trans:"교통편", l_bud:"예상 경비", place:"후기를 남겨주세요...",
                   j1:"더 드루이드", d1:"숨겨진 자연", j2:"고메 헌터", d2:"제철 미식 여행", j3:"더 바드", d3:"인생샷 명소", j4:"더 머천트", d4:"쇼핑 & 굿즈", j5:"스타 시커", d5:"한류 성지순례", j6:"더 노마드", d6:"현지인 체험",
                   loc:"📍 위치 및 택시 주소", taxi:"택시 기사님께 주소 보여주기" },
             jp: { home:"あなただけが知らない韓国。", start:"旅を始める 🚀", jobT:"クラス選択", jobS:"旅行スタイルは？", 
-                  mapT:"地域選択", mapS:"マウスを乗せてプレビュー！", infoT:"📋 旅行情報 & 予算", revT:"⭐ 旅行者のレビュー",
+                  mapT:"地域選択", mapS:"地図をクリックして探索！", infoT:"📋 旅行情報 & 予算", revT:"⭐ 旅行者のレビュー",
                   l_food:"旬の食べ物", l_trans:"交通手段", l_bud:"予算", place:"レビューを書いて...",
                   j1:"ドルイド", d1:"隠れた自然", j2:"グルメハンター", d2:"旬の美食の旅", j3:"バード", d3:"映えスポット", j4:"マーチャント", d4:"ショッピング", j5:"スターシーカー", d5:"K-POP聖地", j6:"ノマド", d6:"現地体験",
                   loc:"📍 位置情報 & タクシー", taxi:"タクシー運転手に見せる" }
@@ -407,21 +387,6 @@
             list.insertBefore(li, list.firstChild);
             input.value = "";
             alert("Review Posted!");
-        }
-
-        // [NEW] 호버시 미리보기 기능
-        function showPreview(element, regionKey) {
-            // 해당 지역의 이미지 URL을 가져와서 배경으로 설정
-            const data = regionDB[regionKey];
-            if(data && data.img) {
-                element.style.backgroundImage = `url('${data.img}')`;
-                element.style.backgroundBlendMode = 'normal'; // 이미지 선명하게
-            }
-        }
-        function hidePreview(element) {
-            // 마우스 떼면 이미지 제거 (원래 색상 복구)
-            element.style.backgroundImage = 'none';
-            element.style.backgroundBlendMode = 'overlay';
         }
     </script>
 </body>
