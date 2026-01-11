@@ -34,57 +34,75 @@
         .card-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 10px; color: #333; }
         .card-desc { font-size: 1rem; color: #888; }
 
-        /* [NEW! 수정된 지도 스타일 - 좌표 고정 방식] */
+        /* [NEW! 한국 블록 지도 - 리얼 쉐이프 에디션] */
         .korea-map-container {
             display: grid;
-            gap: 8px;
+            gap: 6px;
             width: 100%;
-            max-width: 400px; /* 지도 크기 적당하게 제한 */
-            /* 4칸 x 8줄의 바둑판 생성 */
-            grid-template-columns: repeat(4, 1fr);
-            grid-template-rows: repeat(8, 60px); /* 높이 강제 지정 (깨짐 방지) */
+            max-width: 450px;
+            /* 5열 8행으로 더 세밀하게 쪼갬 */
+            grid-template-columns: repeat(5, 1fr);
+            grid-template-rows: repeat(8, 50px);
             margin-bottom: 30px;
+            perspective: 1000px; /* 3D 효과 준비 */
         }
 
         .map-block {
-            border: none; border-radius: 12px;
-            font-size: 1rem; font-weight: 800; color: white;
-            cursor: pointer; transition: 0.2s;
-            display: flex; align-items: center; justify-content: center;
+            border: none; border-radius: 10px;
+            font-size: 0.95rem; font-weight: 800; color: white;
+            cursor: pointer; 
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* 쫀득한 애니메이션 */
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-            padding: 5px; text-transform: capitalize;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+            padding: 5px;
+            background-size: cover;
+            background-position: center;
+            background-blend-mode: overlay; /* 이미지와 배경색 섞기 */
+            position: relative;
         }
-        .map-block:hover { transform: scale(1.05); filter: brightness(1.1); z-index: 2; }
+
+        /* [핵심] 호버 시 프리뷰 효과 */
+        .map-block:hover {
+            transform: scale(1.6) translateY(-10px); /* 1.6배 확대 및 위로 부양 */
+            z-index: 100; /* 다른 블록보다 위로 */
+            box-shadow: 0 20px 30px rgba(0,0,0,0.3);
+            border: 2px solid white;
+            /* 배경 이미지는 JS로 주입됩니다 (평소엔 색상, 호버시 사진) */
+            color: white;
+            text-shadow: 0 2px 10px black;
+        }
+
+        /* 지역별 좌표 (그리드 에어리어) - 한반도 모양 최적화 */
+        /* 경기: 왼쪽 상단 덩어리 */
+        .area-gg { grid-column: 1 / 3; grid-row: 1 / 3; background-color: #7f8c8d; border-radius: 20px 0 0 0;}
+        /* 강원: 오른쪽 상단 넓게 */
+        .area-gw { grid-column: 3 / 6; grid-row: 1 / 3; background-color: #27ae60; border-radius: 0 20px 20px 0;}
+        /* 서울: 경기 속에 쏙 */
+        .area-se { grid-column: 2 / 3; grid-row: 2 / 3; background-color: #2c3e50; border: 2px solid white; z-index: 10; box-shadow: 0 0 10px rgba(0,0,0,0.3); border-radius: 50%;}
         
-        /* 좌표 지정 (Grid Line) */
-        /* 경기: 1~3행, 1~3열 */
-        .area-gg { grid-row: 1 / 3; grid-column: 1 / 3; background-color: #95a5a6; }
-        /* 강원: 1~3행, 3~5열 */
-        .area-gw { grid-row: 1 / 3; grid-column: 3 / 5; background-color: #2ecc71; }
-        /* 충남: 3~5행, 1열 */
-        .area-cn { grid-row: 3 / 5; grid-column: 1 / 2; background-color: #f1c40f; color: #333; text-shadow:none;}
-        /* 서울: 3행, 2열 (경기/충청 사이) */
-        .area-se { grid-row: 3 / 4; grid-column: 2 / 3; background-color: #34495e; border: 3px solid white; z-index: 5;}
-        /* 충북: 3행 3열 + 4행 2~4열? -> 단순화: 3~5행, 2~4열 중 서울/경북 제외하고 배치 */
-        /* 충북 단순화: 3~5행의 가운데 */
-        .area-cb { grid-row: 4 / 5; grid-column: 2 / 4; background-color: #f39c12; }
-        /* 경북: 3~5행, 4열 */
-        .area-gb { grid-row: 3 / 5; grid-column: 4 / 5; background-color: #9b59b6; }
+        /* 충남: 서해안 튀어나옴 */
+        .area-cn { grid-column: 1 / 2; grid-row: 3 / 5; background-color: #f1c40f; color:#333; text-shadow: none; border-radius: 20px 0 0 20px;}
+        /* 충북: 내륙 */
+        .area-cb { grid-column: 2 / 4; grid-row: 3 / 4; background-color: #e67e22; }
+        /* 경북: 동해안 넓게 */
+        .area-gb { grid-column: 4 / 6; grid-row: 3 / 6; background-color: #8e44ad; }
         
-        /* 전북: 5행, 1~3열 */
-        .area-jb { grid-row: 5 / 6; grid-column: 1 / 3; background-color: #e67e22; }
-        /* 경남: 5~7행, 3열 */
-        .area-gn { grid-row: 5 / 7; grid-column: 3 / 4; background-color: #3498db; }
-        /* 부산: 5~7행, 4열 */
-        .area-bs { grid-row: 5 / 7; grid-column: 4 / 5; background-color: #2980b9; }
-        /* 전남: 6~8행, 1~3열 */
-        .area-jn { grid-row: 6 / 8; grid-column: 1 / 3; background-color: #d35400; }
-        /* 제주: 8행, 2~4열 */
-        .area-jj { grid-row: 8 / 9; grid-column: 2 / 4; background-color: #1abc9c; }
+        /* 전북 */
+        .area-jb { grid-column: 1 / 3; grid-row: 5 / 6; background-color: #d35400; }
+        /* 경남 */
+        .area-gn { grid-column: 3 / 5; grid-row: 5 / 7; background-color: #2980b9; }
+        /* 부산: 경남 아래 끝 */
+        .area-bs { grid-column: 5 / 6; grid-row: 5 / 7; background-color: #0d47a1; border-radius: 0 0 20px 0;}
+        
+        /* 전남: 남서해안 복잡함 */
+        .area-jn { grid-column: 1 / 3; grid-row: 6 / 8; background-color: #c0392b; border-radius: 0 0 0 20px;}
+        
+        /* 제주: 바다 건너 */
+        .area-jj { grid-column: 2 / 4; grid-row: 8 / 9; background-color: #16a085; border-radius: 20px; margin-top: 10px;}
 
 
-        /* [상세 페이지] */
+        /* [상세 페이지 등 나머지 스타일은 유지] */
         .detail-container { width: 100%; max-width: 800px; display: flex; flex-direction: column; align-items: center; }
         .detail-header-img { width: 100%; height: 350px; object-fit: cover; border-radius: 25px; margin-bottom: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); background-color: #eee; }
         .info-section { background: white; border-radius: 20px; padding: 30px; width: 100%; box-sizing: border-box; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border-top: 5px solid var(--accent); }
@@ -154,20 +172,23 @@
 
         <div id="screen-food-map" class="screen hidden">
             <h2 class="header-title" id="t-map-title">Select Region</h2>
-            <p class="header-sub" id="t-map-sub">Where will you hunt for flavor?</p>
+            <p class="header-sub" id="t-map-sub">Hover to preview!</p>
 
             <div class="korea-map-container">
-                <button class="map-block area-gg" onclick="loadDetail('Seoul')">Gyeonggi</button>
-                <button class="map-block area-gw" onclick="loadDetail('Gangwon')">Gangwon</button>
-                <button class="map-block area-se" onclick="loadDetail('Seoul')">Seoul</button>
-                <button class="map-block area-cn" onclick="loadDetail('Chungcheong')">Chungnam</button>
-                <button class="map-block area-cb" onclick="loadDetail('Chungcheong')">Chungbuk</button>
-                <button class="map-block area-gb" onclick="loadDetail('Busan')">Gyeongbuk</button>
-                <button class="map-block area-jb" onclick="loadDetail('Jeolla')">Jeonbuk</button>
-                <button class="map-block area-jn" onclick="loadDetail('Jeolla')">Jeonnam</button>
-                <button class="map-block area-gn" onclick="loadDetail('Busan')">Gyeongnam</button>
-                <button class="map-block area-bs" onclick="loadDetail('Busan')">Busan</button>
-                <button class="map-block area-jj" onclick="loadDetail('Jeju')">Jeju</button>
+                <button class="map-block area-gg" onmouseover="showPreview(this, 'Seoul')" onmouseout="hidePreview(this, '')" onclick="loadDetail('Seoul')">Gyeonggi</button>
+                <button class="map-block area-gw" onmouseover="showPreview(this, 'Gangwon')" onmouseout="hidePreview(this, '')" onclick="loadDetail('Gangwon')">Gangwon</button>
+                <button class="map-block area-se" onmouseover="showPreview(this, 'Seoul')" onmouseout="hidePreview(this, '')" onclick="loadDetail('Seoul')">Seoul</button>
+                
+                <button class="map-block area-cn" onmouseover="showPreview(this, 'Chungcheong')" onmouseout="hidePreview(this, '')" onclick="loadDetail('Chungcheong')">Chungnam</button>
+                <button class="map-block area-cb" onmouseover="showPreview(this, 'Chungcheong')" onmouseout="hidePreview(this, '')" onclick="loadDetail('Chungcheong')">Chungbuk</button>
+                <button class="map-block area-gb" onmouseover="showPreview(this, 'Busan')" onmouseout="hidePreview(this, '')" onclick="loadDetail('Busan')">Gyeongbuk</button>
+                
+                <button class="map-block area-jb" onmouseover="showPreview(this, 'Jeolla')" onmouseout="hidePreview(this, '')" onclick="loadDetail('Jeolla')">Jeonbuk</button>
+                <button class="map-block area-gn" onmouseover="showPreview(this, 'Busan')" onmouseout="hidePreview(this, '')" onclick="loadDetail('Busan')">Gyeongnam</button>
+                <button class="map-block area-bs" onmouseover="showPreview(this, 'Busan')" onmouseout="hidePreview(this, '')" onclick="loadDetail('Busan')">Busan</button>
+                
+                <button class="map-block area-jn" onmouseover="showPreview(this, 'Jeolla')" onmouseout="hidePreview(this, '')" onclick="loadDetail('Jeolla')">Jeonnam</button>
+                <button class="map-block area-jj" onmouseover="showPreview(this, 'Jeju')" onmouseout="hidePreview(this, '')" onclick="loadDetail('Jeju')">Jeju</button>
             </div>
 
             <button onclick="goScreen('job')" style="margin-top:40px; padding: 12px 30px; background:none; border:2px solid #ddd; border-radius:30px; cursor:pointer; font-weight:bold; color:#777;">⬅ Back</button>
@@ -217,10 +238,9 @@
     <script>
         let currentLang = 'en';
         let currentRegion = null;
-        let currentClass = 'Gourmet'; // 기본 직업
+        let currentClass = 'Gourmet';
         let map = null; let marker = null;
 
-        // [데이터]
         const regionDB = {
             Jeolla: { 
                 img: "https://images.unsplash.com/photo-1552604660-a8c4dde15b2e?auto=format&fit=crop&w=800&q=80",
@@ -274,32 +294,27 @@
 
         const uiDB = {
             en: { home:"Discover the real Korea.", start:"Start Journey 🚀", jobT:"Select Your Class", jobS:"Choose your travel style", 
-                  mapT:"Select Region", mapS:"Click the map block!", infoT:"📋 Travel Info & Budget", revT:"⭐ Traveler Reviews",
+                  mapT:"Select Region", mapS:"Hover to see preview!", infoT:"📋 Travel Info & Budget", revT:"⭐ Traveler Reviews",
                   l_food:"Seasonal Food", l_trans:"Transport", l_bud:"Budget", place:"Write a review...",
                   j1:"The Druid", d1:"Nature", j2:"Gourmet Hunter", d2:"Food Trip", j3:"The Bard", d3:"Photo Spots", j4:"The Merchant", d4:"Shopping", j5:"Star Seeker", d5:"K-Wave", j6:"The Nomad", d6:"Local Life",
                   loc:"📍 Location & Taxi", taxi:"Show Address to Driver" },
             kr: { home:"당신만 모르는 진짜 한국.", start:"여행 시작하기 🚀", jobT:"여행 직업 선택", jobS:"당신의 여행 스타일은?", 
-                  mapT:"지역 선택", mapS:"지도의 블록을 선택하세요!", infoT:"📋 여행 정보 및 경비", revT:"⭐ 여행자 실시간 리뷰",
+                  mapT:"지역 선택", mapS:"마우스를 올려서 미리보기!", infoT:"📋 여행 정보 및 경비", revT:"⭐ 여행자 실시간 리뷰",
                   l_food:"제철 음식", l_trans:"교통편", l_bud:"예상 경비", place:"후기를 남겨주세요...",
                   j1:"더 드루이드", d1:"숨겨진 자연", j2:"고메 헌터", d2:"제철 미식 여행", j3:"더 바드", d3:"인생샷 명소", j4:"더 머천트", d4:"쇼핑 & 굿즈", j5:"스타 시커", d5:"한류 성지순례", j6:"더 노마드", d6:"현지인 체험",
                   loc:"📍 위치 및 택시 주소", taxi:"택시 기사님께 주소 보여주기" },
             jp: { home:"あなただけが知らない韓国。", start:"旅を始める 🚀", jobT:"クラス選択", jobS:"旅行スタイルは？", 
-                  mapT:"地域選択", mapS:"地図のブロックを選択！", infoT:"📋 旅行情報 & 予算", revT:"⭐ 旅行者のレビュー",
+                  mapT:"地域選択", mapS:"マウスを乗せてプレビュー！", infoT:"📋 旅行情報 & 予算", revT:"⭐ 旅行者のレビュー",
                   l_food:"旬の食べ物", l_trans:"交通手段", l_bud:"予算", place:"レビューを書いて...",
                   j1:"ドルイド", d1:"隠れた自然", j2:"グルメハンター", d2:"旬の美食の旅", j3:"バード", d3:"映えスポット", j4:"マーチャント", d4:"ショッピング", j5:"スターシーカー", d5:"K-POP聖地", j6:"ノマド", d6:"現地体験",
                   loc:"📍 位置情報 & タクシー", taxi:"タクシー運転手に見せる" }
         };
 
-        // 직업 선택 및 화면 전환
         function selectClass(className) {
             currentClass = className;
-            // 테마 색상 변경 (드루이드:초록, 고메:빨강)
             const root = document.documentElement;
-            if(className === 'Druid') {
-                root.style.setProperty('--accent', '#27ae60'); // 초록색
-            } else {
-                root.style.setProperty('--accent', '#d32f2f'); // 빨간색
-            }
+            if(className === 'Druid') { root.style.setProperty('--accent', '#27ae60'); } 
+            else { root.style.setProperty('--accent', '#d32f2f'); }
             goScreen('food-map');
         }
 
@@ -316,7 +331,6 @@
             btn.classList.add('active');
             
             const t = uiDB[lang];
-            // 텍스트 업데이트 (UI)
             document.getElementById('t-home-desc').innerText = t.home;
             document.getElementById('t-start').innerText = t.start;
             document.getElementById('t-job-title').innerText = t.jobT;
@@ -337,7 +351,6 @@
                 if(document.getElementById(`d${i}`)) document.getElementById(`d${i}`).innerText = t[`d${i}`];
             }
 
-            // 만약 상세 페이지를 보고 있다면 상세 내용도 번역
             if(currentRegion && !document.getElementById('screen-detail').classList.contains('hidden')) {
                 const rData = regionDB[currentRegion][lang];
                 if(rData) {
@@ -353,14 +366,12 @@
             currentRegion = regionName;
             const data = regionDB[regionName];
             const t = data[currentLang];
-
             document.getElementById('d-img').src = data.img;
             document.getElementById('d-title').innerText = t.name;
             document.getElementById('d-food').innerText = t.food;
             document.getElementById('d-transport').innerText = t.trans;
             document.getElementById('d-budget').innerText = t.bud;
             document.getElementById('d-address-kr').innerHTML = data.addr;
-
             const list = document.getElementById('review-list');
             list.innerHTML = ""; 
             data.reviews.forEach(r => {
@@ -371,15 +382,11 @@
                 li.innerHTML = `<div class="r-header"><span class="r-user">👤 ${r.user}</span><span class="r-stars">${stars}</span></div><span class="r-text">${r.text}</span>`;
                 list.appendChild(li);
             });
-
             goScreen('detail');
-
             if (!map) {
                 map = L.map('map').setView([data.lat, data.lng], 14);
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap contributors' }).addTo(map);
-            } else {
-                map.setView([data.lat, data.lng], 14);
-            }
+            } else { map.setView([data.lat, data.lng], 14); }
             if (marker) { map.removeLayer(marker); }
             marker = L.marker([data.lat, data.lng]).addTo(map).bindPopup("<b>" + t.name + "</b>").openPopup();
         }
@@ -400,6 +407,21 @@
             list.insertBefore(li, list.firstChild);
             input.value = "";
             alert("Review Posted!");
+        }
+
+        // [NEW] 호버시 미리보기 기능
+        function showPreview(element, regionKey) {
+            // 해당 지역의 이미지 URL을 가져와서 배경으로 설정
+            const data = regionDB[regionKey];
+            if(data && data.img) {
+                element.style.backgroundImage = `url('${data.img}')`;
+                element.style.backgroundBlendMode = 'normal'; // 이미지 선명하게
+            }
+        }
+        function hidePreview(element) {
+            // 마우스 떼면 이미지 제거 (원래 색상 복구)
+            element.style.backgroundImage = 'none';
+            element.style.backgroundBlendMode = 'overlay';
         }
     </script>
 </body>
