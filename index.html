@@ -12,7 +12,7 @@
         /* [기본 설정] */
         :root { --bg-color: #f8f9fa; --primary: #222; --accent: #d32f2f; }
         body { font-family: 'Apple SD Gothic Neo', sans-serif; background-color: var(--bg-color); margin: 0; color: var(--primary); transition: background-color 0.5s; }
-        .app-container { width: 90%; max-width: 1200px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; position: relative; }
+        .app-container { width: 100%; max-width: 1200px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; position: relative; }
         .screen { padding: 40px 0; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .hidden { display: none !important; }
 
@@ -34,13 +34,14 @@
         .card-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 10px; color: #333; }
         .card-desc { font-size: 1rem; color: #888; }
 
-        /* [NEW! 리얼 지도 컨테이너] */
+        /* [NEW! 리얼 지도 컨테이너 - 사이즈 대폭 확대] */
         .korea-svg-container {
             width: 100%;
-            max-width: 600px; /* 지도 크기 */
+            /* 지도가 화면에 꽉 차게 보이도록 크기 제한을 풀었습니다 */
+            max-width: 800px; 
+            height: 70vh; /* 화면 높이의 70%를 차지하게 설정 (모바일/PC 모두 시원하게) */
             margin-bottom: 30px;
-            display: flex; justify-content: center;
-            height: 650px; /* 높이 확보 */
+            display: flex; justify-content: center; align-items: center;
         }
         
         svg { 
@@ -53,19 +54,19 @@
         /* [지도 조각(Path) 스타일] */
         .map-region {
             stroke: #ffffff;      /* 흰색 테두리 */
-            stroke-width: 1px;
+            stroke-width: 1.5px;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            transform-box: fill-box; /* [핵심] 자기 자신을 기준으로 변형 */
-            transform-origin: center; /* [핵심] 중앙에서 확대 */
+            transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+            transform-box: fill-box;
+            transform-origin: center;
         }
 
-        /* [호버 효과 - 이제 완벽하게 작동합니다] */
+        /* [호버 효과] */
         .map-region:hover {
-            transform: scale(1.05); /* 1.05배 확대 */
+            transform: scale(1.05); /* 확대 */
             z-index: 100;
             filter: brightness(1.1) drop-shadow(0 5px 15px rgba(0,0,0,0.3));
-            stroke-width: 2px;
+            stroke-width: 3px;
         }
         
         /* [지역별 색상] */
@@ -80,13 +81,13 @@
             font-weight: 800;
             text-anchor: middle;
             fill: white;
-            text-shadow: 0 1px 4px rgba(0,0,0,0.8);
-            pointer-events: none; /* 클릭 방해 금지 */
-            font-size: 14px;
-            transition: opacity 0.3s;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+            pointer-events: none;
+            font-size: 16px;
         }
-        
-        /* [상세 페이지] */
+        .map-text.small { font-size: 13px; }
+
+        /* [상세 페이지 등 나머지 유지] */
         .detail-container { width: 100%; max-width: 800px; display: flex; flex-direction: column; align-items: center; }
         .detail-header-img { width: 100%; height: 350px; object-fit: cover; border-radius: 25px; margin-bottom: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); background-color: #eee; }
         .info-section { background: white; border-radius: 20px; padding: 30px; width: 100%; box-sizing: border-box; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border-top: 5px solid var(--accent); }
@@ -97,9 +98,7 @@
 
         #map { height: 300px; width: 100%; border-radius: 15px; margin-bottom: 15px; z-index: 1;}
         .taxi-btn { width: 100%; padding: 15px; background-color: var(--accent); color: white; border: none; border-radius: 15px; font-weight: bold; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: 0.2s;}
-        .taxi-btn:hover { filter: brightness(1.1); transform: scale(1.02); }
-
-        /* [택시 모달] */
+        
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 999; display: flex; justify-content: center; align-items: center; }
         .taxi-card-modal { background: white; padding: 40px 20px; border-radius: 20px; width: 90%; max-width: 400px; text-align: center; animation: popUp 0.3s ease; }
         .taxi-card-title { font-size: 1.2rem; color: #666; margin-bottom: 20px; }
@@ -107,7 +106,6 @@
         .taxi-close-btn { background: #333; color: white; border: none; padding: 12px 30px; border-radius: 30px; font-size: 1rem; cursor: pointer; }
         @keyframes popUp { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-        /* [리뷰] */
         .review-input-area { display: flex; gap: 10px; margin-bottom: 25px; background: #f1f3f5; padding: 20px; border-radius: 15px; }
         .star-select { padding: 12px; border-radius: 10px; border: 1px solid #ddd; font-size: 1rem; cursor: pointer;}
         .comment-input { flex: 1; padding: 12px; border-radius: 10px; border: 1px solid #ddd; font-size: 1rem;}
@@ -140,14 +138,8 @@
             <p class="header-sub" id="t-job-sub">Choose your travel style</p>
 
             <div class="grid-box">
-                <div class="card" onclick="selectClass('Druid')">
-                    <span class="card-icon">🍃</span>
-                    <span class="card-title" id="j1">The Druid</span><span class="card-desc" id="d1">Nature</span>
-                </div>
-                <div class="card" onclick="selectClass('Gourmet')">
-                    <span class="card-icon">🍽️</span>
-                    <span class="card-title" id="j2">Gourmet Hunter</span><span class="card-desc" id="d2">Food Trip</span>
-                </div>
+                <div class="card" onclick="selectClass('Druid')"><span class="card-icon">🍃</span><span class="card-title" id="j1">The Druid</span><span class="card-desc" id="d1">Nature</span></div>
+                <div class="card" onclick="selectClass('Gourmet')"><span class="card-icon">🍽️</span><span class="card-title" id="j2">Gourmet Hunter</span><span class="card-desc" id="d2">Food Trip</span></div>
                 <div class="card" onclick="alert('Coming Soon!')"><span class="card-icon">📸</span><span class="card-title" id="j3">The Bard</span><span class="card-desc" id="d3">Photo Spots</span></div>
                 <div class="card" onclick="alert('Coming Soon!')"><span class="card-icon">🛍️</span><span class="card-title" id="j4">The Merchant</span><span class="card-desc" id="d4">Shopping</span></div>
                 <div class="card" onclick="alert('Coming Soon!')"><span class="card-icon">🌟</span><span class="card-title" id="j5">Star Seeker</span><span class="card-desc" id="d5">K-Wave</span></div>
@@ -160,17 +152,17 @@
             <p class="header-sub" id="t-map-sub">Click on the map to explore!</p>
 
             <div class="korea-svg-container">
-                <svg viewBox="0 0 800 1200" xmlns="http://www.w3.org/2000/svg">
-                    <g id="map-paths" transform="translate(50, 50)">
+                <svg viewBox="100 50 600 950" xmlns="http://www.w3.org/2000/svg">
+                    <g id="map-paths">
                         <path id="path-gw" class="map-region fill-gw" d="M380,120 L480,120 L550,250 L450,300 L350,250 L380,120 Z" onclick="loadDetail('Gangwon')"></path>
                         <path id="path-gg" class="map-region fill-gg" d="M250,150 L380,120 L350,250 L300,320 L200,300 L180,200 Z" onclick="loadDetail('Seoul')"></path>
                         <path id="path-se" class="map-region fill-se" d="M280,200 L320,200 L320,240 L280,240 Z" onclick="loadDetail('Seoul')"></path>
                         <path id="path-cb" class="map-region fill-cb" d="M350,250 L450,300 L400,450 L300,400 L300,320 Z" onclick="loadDetail('Chungcheong')"></path>
-                        <path id="path-cn" class="map-region fill-cn" d="M200,300 L300,320 L300,400 L200,450 L150,350 Z" onclick="loadDetail('Chungcheong')"></path>
+                        <path id="path-cn" class="map-region fill-cn" d="M200,300 L300,320 L300,400 L300,450 L200,450 L150,350 Z" onclick="loadDetail('Chungcheong')"></path>
                         <path id="path-gb" class="map-region fill-gb" d="M450,300 L550,250 L600,500 L500,550 L400,450 Z" onclick="loadDetail('Busan')"></path>
                         <path id="path-gn" class="map-region fill-gn" d="M400,450 L500,550 L450,650 L350,600 L300,500 L400,450 Z" onclick="loadDetail('Busan')"></path>
                         <path id="path-bs" class="map-region fill-bs" d="M500,550 L600,500 L580,620 L500,600 Z" onclick="loadDetail('Busan')"></path>
-                        <path id="path-jb" class="map-region fill-jb" d="M200,450 L300,400 L300,500 L250,550 L150,500 Z" onclick="loadDetail('Jeolla')"></path>
+                        <path id="path-jb" class="map-region fill-jb" d="M200,450 L300,450 L300,500 L250,550 L150,500 Z" onclick="loadDetail('Jeolla')"></path>
                         <path id="path-jn" class="map-region fill-jn" d="M150,500 L250,550 L300,500 L350,600 L250,700 L100,600 Z" onclick="loadDetail('Jeolla')"></path>
                         <path id="path-jj" class="map-region fill-jj" d="M150,800 L300,800 L280,880 L170,880 Z" onclick="loadDetail('Jeju')"></path>
                         
@@ -178,7 +170,7 @@
                         <text id="txt-gg" x="250" y="180" class="map-text">Gyeonggi</text>
                         <text id="txt-se" x="300" y="225" class="map-text" style="font-size:12px;">Seoul</text>
                         <text id="txt-cb" x="380" y="350" class="map-text">Chungbuk</text>
-                        <text id="txt-cn" x="220" y="380" class="map-text">Chungnam</text>
+                        <text id="txt-cn" x="230" y="380" class="map-text">Chungnam</text>
                         <text id="txt-gb" x="500" y="400" class="map-text">Gyeongbuk</text>
                         <text id="txt-jb" x="230" y="500" class="map-text">Jeonbuk</text>
                         <text id="txt-gn" x="400" y="550" class="map-text">Gyeongnam</text>
