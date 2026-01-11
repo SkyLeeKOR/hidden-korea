@@ -34,60 +34,52 @@
         .card-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 10px; color: #333; }
         .card-desc { font-size: 1rem; color: #888; }
 
-        /* [NEW! 리얼 지도 컨테이너 (v5.6 복구)] */
+        /* [리얼 지도 컨테이너] */
         .korea-svg-container {
             width: 100%;
-            max-width: 550px; /* 지도 크기 */
+            max-width: 550px;
             margin-bottom: 30px;
             display: flex; justify-content: center;
         }
         
-        /* SVG 지도 내부 스타일 */
-        svg { overflow: visible; } /* 호버 시 잘림 방지 */
+        svg { overflow: visible; }
 
         /* [지도 조각(Path) 스타일] */
         .map-region {
-            stroke: #ffffff;      /* 흰색 테두리 */
-            stroke-width: 1px;    /* 테두리 두께 */
+            stroke: #ffffff;
+            stroke-width: 1.5px;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* 부드러운 애니메이션 */
-            vector-effect: non-scaling-stroke; /* 확대해도 테두리 두께 유지 */
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            vector-effect: non-scaling-stroke;
         }
 
-        /* [호버 효과] 마우스 올리면 둥실 떠오름 */
+        /* [호버 효과 - 확실하게 작동] */
         .map-region:hover {
             opacity: 0.95;
-            transform: translateY(-5px) scale(1.02); /* 살짝 확대되며 위로 */
-            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.2)); /* 그림자 생성 */
+            transform: translateY(-5px) scale(1.02);
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.2));
             z-index: 100;
-            stroke-width: 2px;
-            position: relative; /* z-index 먹히게 */
+            stroke-width: 2.5px;
+            position: relative;
         }
         
-        /* [지역별 색상 - 파스텔톤] */
-        .fill-gw { fill: #2ecc71; } /* 강원 - 초록 */
-        .fill-gg { fill: #95a5a6; } /* 경기 - 회색 */
-        .fill-se { fill: #34495e; stroke-width: 2px; z-index:10; } /* 서울 - 남색 (강조) */
-        .fill-cn { fill: #f1c40f; } /* 충남 - 노랑 */
-        .fill-cb { fill: #f39c12; } /* 충북 - 오렌지 */
-        .fill-gb { fill: #9b59b6; } /* 경북 - 보라 */
-        .fill-gn { fill: #3498db; } /* 경남 - 파랑 */
-        .fill-bs { fill: #2980b9; } /* 부산 - 진파랑 */
-        .fill-jb { fill: #e67e22; } /* 전북 - 주황 */
-        .fill-jn { fill: #d35400; } /* 전남 - 붉은주황 */
-        .fill-jj { fill: #1abc9c; } /* 제주 - 민트 */
+        /* [지역별 색상] */
+        .fill-gw { fill: #2ecc71; } .fill-gg { fill: #95a5a6; } .fill-se { fill: #34495e; stroke-width: 2px; z-index:10; }
+        .fill-cn { fill: #f1c40f; } .fill-cb { fill: #f39c12; } .fill-gb { fill: #9b59b6; }
+        .fill-gn { fill: #3498db; } .fill-bs { fill: #2980b9; } .fill-jb { fill: #e67e22; }
+        .fill-jn { fill: #d35400; } .fill-jj { fill: #1abc9c; }
 
         /* [지도 위 텍스트 스타일] */
         .map-text {
             font-family: 'Apple SD Gothic Neo', sans-serif;
             font-weight: 800;
-            text-anchor: middle; /* 중앙 정렬 */
-            fill: white; /* 흰색 글씨 */
-            text-shadow: 0 1px 3px rgba(0,0,0,0.6); /* 그림자 */
-            pointer-events: none; /* 텍스트가 클릭을 방해하지 않음 */
+            text-anchor: middle;
+            fill: white;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+            pointer-events: none;
             font-size: 16px;
         }
-        .map-text.small { font-size: 13px; } /* 서울, 부산 작게 */
+        .map-text.small { font-size: 13px; }
 
         
         /* [상세 페이지] */
