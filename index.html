@@ -9,7 +9,7 @@
         :root {
             --bg-color: #f8f9fa;
             --text-main: #222;
-            --accent: #d32f2f; /* 고메 헌터용 붉은색 포인트 */
+            --accent: #d32f2f;
         }
         body {
             font-family: 'Apple SD Gothic Neo', sans-serif;
@@ -34,8 +34,8 @@
         }
         .lang-btn.active { background: #333; color: white; border-color: #333; }
 
-        /* [화면 1: 로비] */
-        .home-logo { font-size: 4rem; font-weight: 900; margin-bottom: 20px; letter-spacing: -2px; }
+        /* [텍스트 스타일] */
+        .home-logo { font-size: 4rem; font-weight: 900; margin-bottom: 20px; letter-spacing: -2px; text-align: center;}
         .home-desc { font-size: 1.5rem; color: #555; text-align: center; margin-bottom: 60px; }
         .start-btn {
             padding: 20px 60px; background: #111; color: white; border: none;
@@ -44,16 +44,17 @@
         }
         .start-btn:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
 
-        /* [화면 2: 직업 선택] */
         .header-title { font-size: 2.5rem; font-weight: 800; margin: 0; text-align: center;}
         .header-sub { font-size: 1.2rem; color: #777; margin-top: 10px; text-align: center; margin-bottom: 40px;}
-        
+
+        /* [그리드 레이아웃] */
         .grid-box {
             display: grid; width: 100%; gap: 20px;
-            grid-template-columns: repeat(3, 1fr); /* PC: 3열 */
+            grid-template-columns: repeat(3, 1fr);
         }
         @media (max-width: 768px) { .grid-box { grid-template-columns: repeat(2, 1fr); } }
 
+        /* [직업 카드] */
         .card {
             background: white; border-radius: 20px; padding: 30px 20px;
             text-align: center; cursor: pointer; transition: 0.3s;
@@ -65,27 +66,29 @@
         .card-title { font-size: 1.4rem; font-weight: 800; margin-bottom: 8px; }
         .card-desc { font-size: 0.95rem; color: #888; line-height: 1.4; }
 
-        /* [화면 3: 8도 미식 지도 (New!)] */
+        /* [지역 카드 (음식 지도)] */
         .region-card {
-            padding: 0; overflow: hidden; height: 250px; position: relative;
+            padding: 0; overflow: hidden; height: 280px; position: relative; border-radius: 20px;
         }
         .region-img {
             width: 100%; height: 100%; object-fit: cover; transition: 0.5s;
         }
         .region-overlay {
             position: absolute; bottom: 0; left: 0; width: 100%;
-            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
-            padding: 20px; color: white; text-align: left; box-sizing: border-box;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            padding: 25px 20px; color: white; text-align: left; box-sizing: border-box;
         }
-        .region-name { font-size: 1.5rem; font-weight: bold; display: block; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
-        .region-food { font-size: 0.9rem; opacity: 0.9; }
+        .region-name { font-size: 1.6rem; font-weight: bold; display: block; text-shadow: 0 2px 4px rgba(0,0,0,0.5); margin-bottom: 5px;}
+        .region-food { font-size: 0.95rem; opacity: 0.9; font-weight: 300;}
         
-        .region-card:hover .region-img { transform: scale(1.1); } /* 마우스 올리면 확대 */
+        .region-card:hover .region-img { transform: scale(1.1); }
         
         .back-btn {
-            margin-top: 30px; padding: 10px 30px; border-radius: 30px;
-            border: 2px solid #ddd; background: transparent; cursor: pointer; font-weight: bold;
+            margin-top: 40px; padding: 12px 35px; border-radius: 30px;
+            border: 2px solid #aaa; background: white; cursor: pointer; font-weight: bold; color: #555;
+            transition: 0.2s;
         }
+        .back-btn:hover { background: #333; color: white; border-color: #333; }
     </style>
 </head>
 <body>
@@ -126,94 +129,143 @@
         </div>
 
         <div id="screen-food-map" class="screen hidden">
-            <h2 class="header-title">Select Region</h2>
-            <p class="header-sub">Where will you hunt for flavor?</p>
+            <h2 class="header-title" id="t-map-title">Select Region</h2>
+            <p class="header-sub" id="t-map-sub">Where will you hunt for flavor?</p>
 
             <div class="grid-box">
                 <div class="card region-card" onclick="alert('Seoul Selected!')">
-                    <img src="https://images.unsplash.com/photo-1552604660-a8c4dde15b2e?auto=format&fit=crop&w=600&q=80" class="region-img">
+                    <img src="https://images.unsplash.com/photo-1580651315530-69c8e0026377?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="region-img">
                     <div class="region-overlay">
-                        <span class="region-name">Seoul</span>
-                        <span class="region-food">Royal Cuisine & Street Food</span>
+                        <span class="region-name" id="reg-1-n">Seoul</span>
+                        <span class="region-food" id="reg-1-d">Royal Cuisine & Street Food</span>
                     </div>
                 </div>
                 <div class="card region-card" onclick="alert('Gangwon Selected!')">
-                    <img src="https://images.unsplash.com/photo-1580651315530-69c8e0026377?auto=format&fit=crop&w=600&q=80" class="region-img">
+                    <img src="https://images.unsplash.com/photo-1629814467204-511598f80459?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="region-img">
                     <div class="region-overlay">
-                        <span class="region-name">Gangwon</span>
-                        <span class="region-food">Tofu & Potato & Beef</span>
+                        <span class="region-name" id="reg-2-n">Gangwon</span>
+                        <span class="region-food" id="reg-2-d">Spicy Chicken & Tofu</span>
                     </div>
                 </div>
                 <div class="card region-card" onclick="alert('Jeolla Selected!')">
-                    <img src="https://images.unsplash.com/photo-1583224964978-2257b96070d3?auto=format&fit=crop&w=600&q=80" class="region-img">
+                    <img src="https://images.unsplash.com/photo-1583224964978-2257b96070d3?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="region-img">
                     <div class="region-overlay">
-                        <span class="region-name">Jeolla</span>
-                        <span class="region-food">The Kitchen of Korea (Bibimbap)</span>
+                        <span class="region-name" id="reg-3-n">Jeolla</span>
+                        <span class="region-food" id="reg-3-d">Bibimbap & Full Course</span>
                     </div>
                 </div>
                 <div class="card region-card" onclick="alert('Busan Selected!')">
-                    <img src="https://images.unsplash.com/photo-1629814467204-511598f80459?auto=format&fit=crop&w=600&q=80" class="region-img">
+                    <img src="https://images.unsplash.com/photo-1596450503070-5b56501726cb?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="region-img">
                     <div class="region-overlay">
-                        <span class="region-name">Busan & Gyeongsang</span>
-                        <span class="region-food">Seafood & Pork Soup</span>
+                        <span class="region-name" id="reg-4-n">Busan</span>
+                        <span class="region-food" id="reg-4-d">Seafood & Pork Soup</span>
                     </div>
                 </div>
                 <div class="card region-card" onclick="alert('Jeju Selected!')">
-                    <img src="https://images.unsplash.com/photo-1548115184-bc6544d06a58?auto=format&fit=crop&w=600&q=80" class="region-img">
+                    <img src="https://images.unsplash.com/photo-1602161129995-1748283a0026?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="region-img">
                     <div class="region-overlay">
-                        <span class="region-name">Jeju Island</span>
-                        <span class="region-food">Black Pork & Tangerine</span>
+                        <span class="region-name" id="reg-5-n">Jeju Island</span>
+                        <span class="region-food" id="reg-5-d">Black Pork & Hallabong</span>
                     </div>
                 </div>
                 <div class="card region-card" onclick="alert('Chungcheong Selected!')">
-                    <img src="https://images.unsplash.com/photo-1606297058862-246e7f867493?auto=format&fit=crop&w=600&q=80" class="region-img">
+                    <img src="https://images.unsplash.com/photo-1613568770467-33f7c35f2991?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="region-img">
                     <div class="region-overlay">
-                        <span class="region-name">Chungcheong</span>
-                        <span class="region-food">Walnut Cookie & Noodle</span>
+                        <span class="region-name" id="reg-6-n">Chungcheong</span>
+                        <span class="region-food" id="reg-6-d">Local Noodles & Snacks</span>
                     </div>
                 </div>
             </div>
 
-            <button class="back-btn" onclick="goScreen('job')">⬅ Back to Class Select</button>
+            <button class="back-btn" onclick="goScreen('job')" id="t-back">⬅ Back to Class Select</button>
         </div>
-
     </div>
 
     <script>
-        // 화면 전환 함수
+        let currentLang = 'en'; // 현재 언어 상태 저장
+
         function goScreen(screenName) {
-            // 모든 화면 숨기기
             document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
-            // 선택한 화면만 보여주기
             document.getElementById(`screen-${screenName}`).classList.remove('hidden');
         }
 
-        // 언어 변경 함수
+        // [핵심] 언어 데이터베이스 (지역 정보 포함)
         const db = {
-            en: { home:"Discover the real Korea.", start:"Start Journey 🚀", jobT:"Select Your Class", jobS:"Choose your travel style",
-                  j1:"The Druid", d1:"Hidden Nature", j2:"Gourmet Hunter", d2:"Seasonal Food Trip",
-                  j3:"The Bard", d3:"Photo Spots", j4:"The Merchant", d4:"Shopping", j5:"Star Seeker", d5:"K-Wave", j6:"The Nomad", d6:"Local Life" },
-            kr: { home:"당신만 모르는 진짜 한국.", start:"여행 시작하기 🚀", jobT:"여행 직업 선택", jobS:"당신의 여행 스타일은?",
-                  j1:"더 드루이드", d1:"숨겨진 자연", j2:"고메 헌터", d2:"제철 미식 여행",
-                  j3:"더 바드", d3:"인생샷 명소", j4:"더 머천트", d4:"쇼핑 & 굿즈", j5:"스타 시커", d5:"한류 성지순례", j6:"더 노마드", d6:"현지인 체험" },
-            jp: { home:"あなただけが知らない韓国。", start:"旅を始める 🚀", jobT:"クラス選択", jobS:"旅行スタイルは？",
-                  j1:"ドルイド", d1:"隠れた自然", j2:"グルメハンター", d2:"旬の美食の旅",
-                  j3:"バード", d3:"映えスポット", j4:"マーチャント", d4:"ショッピング", j5:"スターシーカー", d5:"K-POP聖地", j6:"ノマド", d6:"現地体験" }
+            en: { 
+                home:"Discover the real Korea.", start:"Start Journey 🚀", 
+                jobT:"Select Your Class", jobS:"Choose your travel style",
+                // 직업
+                j1:"The Druid", d1:"Hidden Nature", j2:"Gourmet Hunter", d2:"Seasonal Food Trip",
+                j3:"The Bard", d3:"Photo Spots", j4:"The Merchant", d4:"Shopping", j5:"Star Seeker", d5:"K-Wave", j6:"The Nomad", d6:"Local Life",
+                // 지역 (미식 지도)
+                mapT: "Select Region", mapS: "Where will you hunt for flavor?", back: "⬅ Back to Class Select",
+                r1n: "Seoul", r1d: "Royal Cuisine & Street Food",
+                r2n: "Gangwon", r2d: "Spicy Chicken & Tofu",
+                r3n: "Jeolla", r3d: "Bibimbap & Full Course",
+                r4n: "Busan", r4d: "Seafood & Pork Soup",
+                r5n: "Jeju Island", r5d: "Black Pork & Hallabong",
+                r6n: "Chungcheong", r6d: "Local Noodles & Snacks"
+            },
+            kr: { 
+                home:"당신만 모르는 진짜 한국.", start:"여행 시작하기 🚀", 
+                jobT:"여행 직업 선택", jobS:"당신의 여행 스타일은?",
+                // 직업
+                j1:"더 드루이드", d1:"숨겨진 자연", j2:"고메 헌터", d2:"제철 미식 여행",
+                j3:"더 바드", d3:"인생샷 명소", j4:"더 머천트", d4:"쇼핑 & 굿즈", j5:"스타 시커", d5:"한류 성지순례", j6:"더 노마드", d6:"현지인 체험",
+                // 지역 (미식 지도)
+                mapT: "지역 선택", mapS: "어디로 미식 사냥을 떠나시겠습니까?", back: "⬅ 직업 선택으로 돌아가기",
+                r1n: "서울", r1d: "궁중 요리와 길거리 음식",
+                r2n: "강원도", r2d: "춘천 닭갈비와 초당 순두부",
+                r3n: "전라도", r3d: "전주 비빔밥과 한정식",
+                r4n: "부산 & 경상", r4d: "싱싱한 해산물과 돼지국밥",
+                r5n: "제주도", r5d: "흑돼지 구이와 한라봉",
+                r6n: "충청도", r6d: "어죽 국수와 호두과자"
+            },
+            jp: { 
+                home:"あなただけが知らない韓国。", start:"旅を始める 🚀", 
+                jobT:"クラス選択", jobS:"旅行スタイルは？",
+                // 직업
+                j1:"ドルイド", d1:"隠れた自然", j2:"グルメハンター", d2:"旬の美食の旅",
+                j3:"バード", d3:"映えスポット", j4:"マーチャント", d4:"ショッピング", j5:"スターシーカー", d5:"K-POP聖地", j6:"ノマド", d6:"現地体験",
+                // 지역 (미식 지도)
+                mapT: "地域選択", mapS: "どこでグルメ狩りを始めますか？", back: "⬅ クラス選択に戻る",
+                r1n: "ソウル", r1d: "宮廷料理と屋台",
+                r2n: "江原道", r2d: "タッカルビとスンドゥブ",
+                r3n: "全羅道", r3d: "ビビンバと韓定食",
+                r4n: "釜山 & 慶尚", r4d: "海産物とデジクッパ",
+                r5n: "済州島", r5d: "黒豚とハンラボン",
+                r6n: "忠清道", r6d: "麺料理とくるみ饅頭"
+            }
         };
 
         function setLang(lang, btn) {
+            currentLang = lang; // 언어 상태 업데이트
+
             document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
+            
             const t = db[lang];
             
+            // 1. 홈 화면 업데이트
             document.getElementById('t-home-desc').innerText = t.home;
             document.getElementById('t-start').innerText = t.start;
+            
+            // 2. 직업 선택 화면 업데이트
             document.getElementById('t-job-title').innerText = t.jobT;
             document.getElementById('t-job-sub').innerText = t.jobS;
-            
             for(let i=1; i<=6; i++) {
                 document.getElementById(`job-${i}`).innerText = t[`j${i}`];
                 document.getElementById(`desc-${i}`).innerText = t[`d${i}`];
+            }
+
+            // 3. [NEW] 지역 선택 화면 (미식 지도) 업데이트
+            document.getElementById('t-map-title').innerText = t.mapT;
+            document.getElementById('t-map-sub').innerText = t.mapS;
+            document.getElementById('t-back').innerText = t.back;
+            
+            for(let i=1; i<=6; i++) {
+                document.getElementById(`reg-${i}-n`).innerText = t[`r${i}n`];
+                document.getElementById(`reg-${i}-d`).innerText = t[`r${i}d`];
             }
         }
     </script>
