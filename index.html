@@ -12,7 +12,7 @@
         /* [기본 설정] */
         :root { --bg-color: #f8f9fa; --primary: #222; --accent: #d32f2f; }
         body { font-family: 'Apple SD Gothic Neo', sans-serif; background-color: var(--bg-color); margin: 0; color: var(--primary); transition: background-color 0.5s; }
-        .app-container { width: 100%; max-width: 1200px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; position: relative; }
+        .app-container { width: 90%; max-width: 1200px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; position: relative; }
         .screen { padding: 40px 0; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .hidden { display: none !important; }
 
@@ -34,12 +34,11 @@
         .card-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 10px; color: #333; }
         .card-desc { font-size: 1rem; color: #888; }
 
-        /* [NEW! 리얼 지도 컨테이너 - 사이즈 대폭 확대] */
+        /* [리얼 지도 컨테이너] */
         .korea-svg-container {
             width: 100%;
-            /* 지도가 화면에 꽉 차게 보이도록 크기 제한을 풀었습니다 */
             max-width: 800px; 
-            height: 70vh; /* 화면 높이의 70%를 차지하게 설정 (모바일/PC 모두 시원하게) */
+            height: 70vh; 
             margin-bottom: 30px;
             display: flex; justify-content: center; align-items: center;
         }
@@ -157,8 +156,8 @@
                         <path id="path-gw" class="map-region fill-gw" d="M380,120 L480,120 L550,250 L450,300 L350,250 L380,120 Z" onclick="loadDetail('Gangwon')"></path>
                         <path id="path-gg" class="map-region fill-gg" d="M250,150 L380,120 L350,250 L300,320 L200,300 L180,200 Z" onclick="loadDetail('Seoul')"></path>
                         <path id="path-se" class="map-region fill-se" d="M280,200 L320,200 L320,240 L280,240 Z" onclick="loadDetail('Seoul')"></path>
-                        <path id="path-cb" class="map-region fill-cb" d="M350,250 L450,300 L400,450 L300,400 L300,320 Z" onclick="loadDetail('Chungcheong')"></path>
-                        <path id="path-cn" class="map-region fill-cn" d="M200,300 L300,320 L300,400 L300,450 L200,450 L150,350 Z" onclick="loadDetail('Chungcheong')"></path>
+                        <path id="path-cb" class="map-region fill-cb" d="M350,250 L450,300 L400,450 L300,400 L250,350 L300,320 Z" onclick="loadDetail('Chungcheong')"></path>
+                        <path id="path-cn" class="map-region fill-cn" d="M200,300 L300,320 L250,350 L300,400 L300,450 L200,450 L150,350 Z" onclick="loadDetail('Chungcheong')"></path>
                         <path id="path-gb" class="map-region fill-gb" d="M450,300 L550,250 L600,500 L500,550 L400,450 Z" onclick="loadDetail('Busan')"></path>
                         <path id="path-gn" class="map-region fill-gn" d="M400,450 L500,550 L450,650 L350,600 L300,500 L400,450 Z" onclick="loadDetail('Busan')"></path>
                         <path id="path-bs" class="map-region fill-bs" d="M500,550 L600,500 L580,620 L500,600 Z" onclick="loadDetail('Busan')"></path>
@@ -169,7 +168,7 @@
                         <text id="txt-gw" x="450" y="200" class="map-text">Gangwon</text>
                         <text id="txt-gg" x="250" y="180" class="map-text">Gyeonggi</text>
                         <text id="txt-se" x="300" y="225" class="map-text" style="font-size:12px;">Seoul</text>
-                        <text id="txt-cb" x="380" y="350" class="map-text">Chungbuk</text>
+                        <text id="txt-cb" x="370" y="350" class="map-text">Chungbuk</text>
                         <text id="txt-cn" x="230" y="380" class="map-text">Chungnam</text>
                         <text id="txt-gb" x="500" y="400" class="map-text">Gyeongbuk</text>
                         <text id="txt-jb" x="230" y="500" class="map-text">Jeonbuk</text>
