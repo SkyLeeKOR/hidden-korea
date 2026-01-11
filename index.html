@@ -34,42 +34,42 @@
         .card-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 10px; color: #333; }
         .card-desc { font-size: 1rem; color: #888; }
 
-        /* [NEW! 리얼 SVG 지도 스타일] */
+        /* [NEW! 리얼 지도 컨테이너] */
         .korea-svg-container {
             width: 100%;
-            max-width: 550px; /* 지도 크기 조절 */
+            max-width: 500px; /* 지도 크기 */
             margin-bottom: 30px;
-            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.15)); /* 전체 지도 그림자 */
+            /* 지도가 화면 중앙에 오도록 */
+            display: flex; justify-content: center;
         }
-        
-        /* 각 지역(path) 공통 스타일 */
+
+        /* [지도 조각(Path) 스타일] */
         .map-region {
-            stroke: #fff; /* 흰색 테두리 */
+            stroke: #ffffff;      /* 흰색 테두리 */
             stroke-width: 2px;
-            stroke-linejoin: round;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             cursor: pointer;
+            transition: all 0.3s ease;
         }
 
-        /* 호버 효과: 색상 변경 + 튀어오름 + 그림자 */
+        /* [호버 효과] 마우스 올리면 둥실 떠오름 */
         .map-region:hover {
-            fill: var(--accent) !important; /* 직업 테마색으로 변경 */
-            transform: translateY(-5px) scale(1.02); /* 살짝 위로 커지며 이동 */
-            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3));
-            z-index: 10;
+            opacity: 0.9;
+            transform: translateY(-5px) scale(1.02); /* 살짝 확대되며 위로 */
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3)); /* 그림자 생성 */
+            z-index: 100;
         }
 
-        /* 지역별 고유 색상 (요청하신 지도 느낌 반영) */
-        .fill-gw { fill: #76c7c0; } /* 강원 - 청록 */
-        .fill-gg { fill: #a569bd; } /* 경기 - 보라 */
-        .fill-se { fill: #34495e; stroke-width: 3px; z-index: 5; } /* 서울 - 진한 남색 (강조) */
-        .fill-cn { fill: #f39c12; } /* 충남 - 주황 */
-        .fill-cb { fill: #f1c40f; } /* 충북 - 노랑 */
-        .fill-gb { fill: #8e44ad; } /* 경북 - 진보라 */
-        .fill-gn { fill: #e74c3c; } /* 경남 - 빨강 */
-        .fill-jb { fill: #d35400; } /* 전북 - 진주황 */
-        .fill-jn { fill: #c0392b; } /* 전남 - 진빨강 */
-        .fill-bs { fill: #2980b9; } /* 부산 - 파랑 */
+        /* [지역별 색상 - 파스텔톤] */
+        .fill-gw { fill: #2ecc71; } /* 강원 - 초록 */
+        .fill-gg { fill: #95a5a6; } /* 경기 - 회색 */
+        .fill-se { fill: #34495e; stroke-width: 3px; } /* 서울 - 남색 (강조) */
+        .fill-cn { fill: #f1c40f; } /* 충남 - 노랑 */
+        .fill-cb { fill: #f39c12; } /* 충북 - 오렌지 */
+        .fill-gb { fill: #9b59b6; } /* 경북 - 보라 */
+        .fill-gn { fill: #3498db; } /* 경남 - 파랑 */
+        .fill-bs { fill: #2980b9; } /* 부산 - 진파랑 */
+        .fill-jb { fill: #e67e22; } /* 전북 - 주황 */
+        .fill-jn { fill: #d35400; } /* 전남 - 붉은주황 */
         .fill-jj { fill: #1abc9c; } /* 제주 - 민트 */
 
         
@@ -99,7 +99,6 @@
         .star-select { padding: 12px; border-radius: 10px; border: 1px solid #ddd; font-size: 1rem; cursor: pointer;}
         .comment-input { flex: 1; padding: 12px; border-radius: 10px; border: 1px solid #ddd; font-size: 1rem;}
         .post-btn { background: #333; color: white; border: none; padding: 0 25px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.2s;}
-        .post-btn:hover { background: black; }
         .review-list { list-style: none; padding: 0; margin: 0; }
         .review-item { background: white; border-bottom: 1px solid #eee; padding: 20px 0; display: flex; flex-direction: column; }
         .r-header { display: flex; justify-content: space-between; margin-bottom: 8px; align-items: center;}
@@ -148,25 +147,29 @@
             <p class="header-sub" id="t-map-sub">Click on the map to explore!</p>
 
             <div class="korea-svg-container">
-                <svg version="1.1" id="korea-map-svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 540 840" style="enable-background:new 0 0 540 840;" xml:space="preserve">
-                    <g id="regions">
-                        <path id="path-gw" class="map-region fill-gw" d="M339.6,187.1l-7.2-10l-5.7,2.1l-8.2-6.7l-4.6,0.5l-11.8-7.7l1.5-9.3l-6.7-6.2l0.5-10.8l-5.1-4.1l3.6-14.9l-6.7-6.2l4.1-9.8l-5.1-9.3L302.5,91l7.7-17l13.9-1.5l14.4,10.8l7.2,2.6l9.3-3.6l7.7,3.1l8.2,14.4l-1.5,5.1l4.6,6.7l-5.7,11.3l6.2,13.4l-3.6,7.2l8.7,7.7l-5.1,18.5l7.7,14.9l-2.6,11.8l11.3,23.7l-5.7,7.7l10.8,13.9l-6.7,12.9l7.7,10.8l-4.1,8.2l4.1,6.2l-12.3,7.7l2.6,8.7l-7.7,5.1l3.6,10.3l-5.7,8.7l3.1,6.2l-12.3,9.8l-7.7-3.6l-11.3,9.8l-10.8-5.7l-9.3,4.6L293.9,312l-11.8-7.7l-0.5-6.2l-14.4-10.3l5.7-12.3l-4.1-8.7l9.3-11.3l11.3-1.5l7.2-14.4l12.9-7.7l-1.5-10.3L339.6,187.1z" onclick="loadDetail('Gangwon')"/>
-                        <path id="path-gg" class="map-region fill-gg" d="M197.8,269.9l-8.7,3.6l-6.7-7.2l-8.7,3.6l-10.3-7.2l-9.3,2.6l-14.9-10.8l-5.1,5.7l-5.7-2.6l-5.1,5.1l-6.7-3.1l-6.2,5.7l-2.6-2.1l-7.2,7.7l-13.4-3.1l-5.1,3.6l0.5-5.7l8.2-9.3l-6.7-5.7l3.6-12.3l8.7-5.1l-1.5-8.2l8.2-5.7l2.1-13.4l6.7-7.2l-3.6-7.7l9.3-5.1l-3.6-9.8l6.7-3.6l-0.5-7.7l6.2-2.6l2.6-9.8l12.9,2.1l12.3-11.3l8.7,2.6l3.6-6.2l7.2-0.5l7.7,7.7l7.2-2.1l6.2,12.3l14.4,10.3l0.5,6.2l11.8,7.7l34.1,3.1l9.3-4.6l10.8,5.7l11.3-9.8l7.7,3.6l12.3-9.8l-3.1-6.2l5.7-8.7l-3.6-10.3l7.7-5.1l-2.6-8.7l12.3-7.7l-4.1-6.2l4.1-8.2l-7.7-10.8l6.7-12.9l-10.8-13.9l5.7-7.7l-11.3-23.7l2.6-11.8l-7.7-14.9l5.1-18.5l-8.7-7.7l3.6-7.2l-6.2-13.4l5.7-11.3l-4.6-6.7l1.5-5.1l-8.2-14.4l-7.7-3.1l-9.3,3.6l-7.2-2.6l-14.4-10.8l-13.9,1.5l-7.7,17l-14.4,4.6l5.1,9.3l-4.1,9.8l6.7,6.2l-3.6,14.9l5.1,4.1l-0.5,10.8l6.7,6.2l-1.5,9.3l11.8,7.7l4.6-0.5l8.2,6.7l5.7-2.1l7.2,10l-31.5,34.4l1.5,10.3l-12.9,7.7l-7.2,14.4l-11.3,1.5l-9.3,11.3l4.1,8.7l-5.7,12.3L197.8,269.9z M199.9,199.5l-5.7,4.6l-14.4-6.7l-2.6,14.9l11.3,11.8l12.9,3.6l8.2-9.3l-3.6-15.9L199.9,199.5z" onclick="loadDetail('Seoul')"/>
-                        <path id="path-se" class="map-region fill-se" d="M199.9,199.5l6.2,3.1l3.6,15.9l-8.2,9.3l-12.9-3.6l-11.3-11.8l2.6-14.9l14.4,6.7L199.9,199.5z" onclick="loadDetail('Seoul')"/>
+                <svg viewBox="0 0 500 700" xmlns="http://www.w3.org/2000/svg">
+                    <g transform="translate(10, 10)">
+                        <path class="map-region fill-gw" d="M250,50 L350,150 L380,250 L300,280 L250,250 L220,150 Z" onclick="loadDetail('Gangwon')"></path>
                         
-                        <path id="path-cn" class="map-region fill-cn" d="M78.1,307.4l5.1,3.6l13.4-11.8l9.3,2.1l6.7-13.4l7.2,4.1l8.7-13.4l-2.6-2.1l6.2-5.7l6.7,3.1l5.1-5.1l5.7,2.6l5.1-5.7l14.9,10.8l9.3-2.6l10.3,7.2l8.7-3.6l6.7,7.2l8.7-3.6l10.8,8.7l5.7-3.6l2.6,8.7l11.3-0.5l-5.7,8.7l7.7,6.7l-5.1,9.3l11.3,5.7l2.6,11.8l-4.1,12.9l-6.7-1.5l-7.7,13.9l-12.3,7.7l2.1,12.9l-15.4,10.8l0.5,6.2l-8.2,4.1l-10.3-8.7l-7.7,10.8l-12.9,5.7l-3.6-5.1l-12.3,1.5l-4.1-6.7l-8.2,1.5l-3.6-7.7l-12.9,3.6l-7.7-9.8l-14.4,7.2l-5.1-4.6l-14.4,8.2l-4.1-12.3l7.2-7.7l-5.1-15.4l9.3-2.1l4.6-13.9l-13.9-4.6l2.6-11.8l-13.9,3.6l3.6-13.4l9.8,3.1l1.5-10.3L78.1,307.4z" onclick="loadDetail('Chungcheong')"/>
-                        <path id="path-cb" class="map-region fill-cb" d="M282.1,416.9l-12.3-7.7l7.7-13.9l6.7,1.5l4.1-12.9l-2.6-11.8l-11.3-5.7l5.1-9.3l-7.7-6.7l5.7-8.7l-11.3,0.5l-2.6-8.7l-5.7,3.6l-10.8-8.7l8.7-16.4l34.1,3.1l9.3-4.6l10.8,5.7l11.3-9.8l7.7,3.6l12.3-9.8l-3.1-6.2l5.7-8.7l-3.6-10.3l7.7-5.1l-2.6-8.7l12.3-7.7l4.6,11.8l-9.8,11.3l5.7,11.8l-3.6,10.3l9.3,6.7l-4.6,17.5l10.8,6.2l1.5,8.7l-13.4,18.5l-9.8,2.6l-7.7,12.9l6.2,5.1l-3.6,13.4l-12.3-2.1l-9.8,11.8l-13.9-3.6l-5.1,13.9l-8.7-3.6l-9.8,11.3L282.1,416.9z" onclick="loadDetail('Chungcheong')"/>
+                        <path class="map-region fill-gg" d="M150,150 L220,150 L250,250 L220,300 L150,280 L100,200 Z" onclick="loadDetail('Seoul')"></path>
                         
-                        <path id="path-gb" class="map-region fill-gb" d="M409.1,456.5l-12.3,13.9l-9.8-3.1l-8.2,9.3l-13.9-3.1l-2.1-13.4l-7.2,2.6l-5.7-7.7l-9.8,1.5l-8.2-11.8l7.7-10.3l-7.7-14.4l-12.9,5.1l-7.2-10.3l-9.8,11.8l12.3,2.1l3.6-13.4l-6.2-5.1l7.7-12.9l9.8-2.6l13.4-18.5l-1.5-8.7l-10.8-6.2l4.6-17.5l-9.3-6.7l3.6-10.3l-5.7-11.8l9.8-11.3l-4.6-11.8l4.1,6.2l12.3-7.7l2.6,8.7l-7.7,5.1l3.6,10.3l-5.7,8.7l3.1,6.2l-12.3,9.8l-7.7-3.6l-11.3,9.8l-10.8-5.7l-9.3,4.6l-34.1-3.1l-11.8-7.7l-0.5-6.2l-14.4-10.3l-6.2-12.3l-7.2,2.1l-7.7-7.7l-7.2,0.5l-3.6,6.2l-8.7-2.6l-12.3,11.3l-12.9-2.1l-2.6,9.8l-6.2,2.6l0.5,7.7l-6.7,3.6l3.6,9.8l-9.3,5.1l3.6,7.7l-6.7,7.2l-2.1,13.4l-8.2,5.7l1.5,8.2l-8.7,5.1l-3.6,12.3l6.7,5.7l-8.2,9.3l-0.5,5.7l5.1-3.6l13.4,3.1l7.2-7.7l2.6,2.1l-8.7,16.4l10.8,8.7l5.7-3.6l2.6,8.7l11.3-0.5l-5.7,8.7l7.7,6.7l-5.1,9.3l11.3,5.7l2.6,11.8l-4.1,12.9l-6.7-1.5l-7.7,13.9l-12.3,7.7l2.1,12.9l-15.4,10.8l0.5,6.2l-8.2,4.1l-10.3-8.7l-7.7,10.8l-12.9,5.7l-3.6-5.1l-12.3,1.5l-4.1-6.7l-8.2,1.5l-3.6-7.7l-12.9,3.6l-7.7-9.8l-14.4,7.2l-5.1-4.6l-14.4,8.2l-4.1-12.3l7.2-7.7l-5.1-15.4l9.3-2.1l4.6-13.9l-13.9-4.6l2.6-11.8l-13.9,3.6l3.6-13.4l9.8,3.1l1.5-10.3l21.1-9.8l5.1,3.6l13.4-11.8l9.3,2.1l6.7-13.4l7.2,4.1l8.7-13.4l-2.6-2.1l6.2-5.7l6.7,3.1l5.1-5.1l5.7,2.6l5.1-5.7l14.9,10.8l9.3-2.6l10.3,7.2l8.7-3.6l6.7,7.2l8.7-3.6l10.8,8.7l5.7-3.6l2.6,8.7l11.3-0.5l-5.7,8.7l7.7,6.7l-5.1,9.3l11.3,5.7l2.6,11.8l-4.1,12.9l-6.7-1.5l-7.7,13.9l-12.3,7.7l2.1,12.9l-15.4,10.8l0.5,6.2l-8.2,4.1l-10.3-8.7l-7.7,10.8l-12.9,5.7l-3.6-5.1l-12.3,1.5l-4.1-6.7l-8.2,1.5l-3.6-7.7l-12.9,3.6l-7.7-9.8l-14.4,7.2l-5.1-4.6l-14.4,8.2l-4.1-12.3l7.2-7.7l-5.1-15.4l9.3-2.1l4.6-13.9l-13.9-4.6l2.6-11.8l-13.9,3.6l3.6-13.4l9.8,3.1l1.5-10.3l21.1-9.8l5.1,3.6l13.4-11.8l9.3,2.1l6.7-13.4l7.2,4.1l8.7-13.4L409.1,456.5z" onclick="loadDetail('Busan')"/>
+                        <path class="map-region fill-se" d="M180,200 L210,200 L210,230 L180,230 Z" onclick="loadDetail('Seoul')"></path>
                         
-                        <path id="path-jb" class="map-region fill-jb" d="M120.8,501.2l-13.9,6.7l-10.3-9.8l-12.9,3.6l-9.3-11.8l-13.4,2.6l-2.6-13.4l-15.4,3.1l-6.7-7.7l11.8-12.3l-3.6-10.3l9.3-6.2l-6.7-16.4l12.3-9.8l-4.6-11.8l13.9-8.2l5.1,4.6l14.4-7.2l7.7,9.8l12.9-3.6l3.6,7.7l8.2-1.5l4.1,6.7l12.3-1.5l3.6,5.1l12.9-5.7l7.7-10.8l10.3,8.7l8.2-4.1l-0.5-6.2l15.4-10.8l-2.1-12.9l12.3-7.7l-0.5,18.5l9.8-11.3l8.7,3.6l5.1-13.9l13.9,3.6l7.2,10.3l12.9-5.1l7.7,14.4l-7.7,10.3l8.2,11.8l9.8-1.5l5.7,7.7l7.2-2.6l2.1,13.4l13.9,3.1l8.2-9.3l9.8,3.1l12.3-13.9l2.1,13.4l-6.2,8.7l7.7,10.8l-3.1,11.3l-9.3,6.7l5.1,11.3l-10.3,10.3l7.7,17l-15.9,13.9l-9.3-4.6l-8.2,9.3l-11.3-1.5l-4.6,12.9l-18.5,4.6l1.5,13.9l-8.7,3.1l-10.3-9.8l-9.8,4.6l-7.2-10.8l-12.3,6.7l-4.6-7.2l-8.2,3.6l-6.2-10.3l-10.8,2.6L120.8,501.2z" onclick="loadDetail('Jeolla')"/>
+                        <path class="map-region fill-cb" d="M220,300 L250,250 L300,280 L280,350 L230,350 Z" onclick="loadDetail('Chungcheong')"></path>
                         
-                        <path id="path-gn" class="map-region fill-gn" d="M309.9,626.7l-1.5-13.9l18.5-4.6l4.6-12.9l11.3,1.5l8.2-9.3l9.3,4.6l15.9-13.9l-7.7-17l10.3-10.3l-5.1-11.3l9.3-6.7l3.1-11.3l-7.7-10.8l6.2-8.7l-2.1-13.4l18,15.9l14.4-4.6l11.3,10.8l-10.3,11.8l5.7,6.2l-13.4,22.1l18,15.4l13.4-4.6l6.2,9.3l-5.1,8.2l18,9.3l-6.7,25.7l-23.1-4.6l-4.6,14.4l-12.9-5.7l-5.7,8.2l-11.8-3.6l-4.6,13.4l-12.9,1.5l-4.1-11.3l-8.2-2.1l-11.3,9.8l-10.8-8.7l1.5-13.9l-9.3,2.6l-7.2-11.8l-8.2,4.6L309.9,626.7z" onclick="loadDetail('Busan')"/>
-                        <path id="path-bs" class="map-region fill-bs" d="M422.1,656l5.1-8.2l-6.2-9.3l-13.4,4.6l-18-15.4l13.4-22.1l-5.7-6.2l10.3-11.8l-11.3-10.8l-14.4,4.6l-18-15.9l22.6,20.1l9.3,3.6l6.2,11.8l14.9-2.6l8.2,9.3l11.8-1.5l6.7,13.4l12.9,3.6l-3.6,13.4l5.7,5.1l-9.3,14.9L422.1,656z" onclick="loadDetail('Busan')"/>
-
-                        <path id="path-jn" class="map-region fill-jn" d="M145,680.7l-14.4,8.7l2.1,10.3l-11.3,6.2l3.1,12.3l-25.2,14.9l-7.7-9.3l-7.2,5.1l-5.1-10.8l-9.8,2.6l-3.6-11.8l-8.7,3.1l-2.6-10.3l-12.9,4.6l-2.6-12.9l-8.7-2.1l4.1-18l-9.8-11.3l13.9-11.8l0.5-11.3l-11.3-7.7l8.7-10.3l-6.7-14.4l10.8-8.7l-2.1-8.2l9.3,1.5l6.7-11.3l9.3,4.1l10.8-2.6l6.2,10.3l8.2-3.6l4.6,7.2l12.3-6.7l7.2,10.8l9.8-4.6l10.3,9.8l8.7-3.1l8.2,4.6l7.2,11.8l9.3-2.6l-1.5,13.9l10.8,8.7l11.3-9.8l8.2,2.1l4.1,11.3l12.9-1.5l4.6-13.4l11.8,3.6l5.7-8.2l12.9,5.7l4.6-14.4l23.1,4.6l-7.7,30.3l-9.3,11.8l7.2,6.7l-23.1,4.1l-3.1,10.8l-24.2-1.5l-4.6,10.3l-10.8-5.7l-7.7,7.2l-11.3-6.7l-6.7,8.7l-13.4-4.1l-5.7,10.3l-16.4-11.8l-5.7,12.3l-8.7-7.7l-7.7,8.2l-10.3-11.8L145,680.7z" onclick="loadDetail('Jeolla')"/>
+                        <path class="map-region fill-cn" d="M150,280 L220,300 L230,350 L180,380 L100,320 Z" onclick="loadDetail('Chungcheong')"></path>
                         
-                        <path id="path-jj" class="map-region fill-jj" d="M211.7,826.7l-21.1-6.2l-14.4,3.1l-10.3-8.7l5.1-13.4l12.3-4.6l18.5,3.1l20.1-7.7l14.4,6.2l10.8-3.1l11.3,8.7l-5.7,10.8l-14.4,5.7L211.7,826.7z" onclick="loadDetail('Jeju')"/>
+                        <path class="map-region fill-gb" d="M300,280 L380,250 L400,400 L320,420 L280,350 Z" onclick="loadDetail('Busan')"></path>
+                        
+                        <path class="map-region fill-jb" d="M180,380 L230,350 L280,350 L260,450 L150,420 Z" onclick="loadDetail('Jeolla')"></path>
+                        
+                        <path class="map-region fill-gn" d="M260,450 L320,420 L400,400 L380,500 L280,500 Z" onclick="loadDetail('Busan')"></path>
+                        
+                        <path class="map-region fill-bs" d="M380,480 L400,480 L400,500 L380,500 Z" onclick="loadDetail('Busan')"></path>
+                        
+                        <path class="map-region fill-jn" d="M150,420 L260,450 L280,500 L250,550 L120,520 Z" onclick="loadDetail('Jeolla')"></path>
+                        
+                        <path class="map-region fill-jj" d="M150,600 L250,600 L240,650 L160,650 Z" onclick="loadDetail('Jeju')"></path>
                     </g>
                 </svg>
             </div>
