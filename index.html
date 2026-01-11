@@ -34,46 +34,60 @@
         .card-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 10px; color: #333; }
         .card-desc { font-size: 1rem; color: #888; }
 
-        /* [NEW! 리얼 지도 컨테이너] */
+        /* [NEW! 리얼 지도 컨테이너 (v5.6 복구)] */
         .korea-svg-container {
             width: 100%;
             max-width: 550px; /* 지도 크기 */
             margin-bottom: 30px;
             display: flex; justify-content: center;
-            /* SVG 내 텍스트 스타일 */
-            font-family: 'Apple SD Gothic Neo', sans-serif;
-            font-weight: 800;
-            text-anchor: middle; /* 텍스트 중앙 정렬 */
-            fill: white; /* 텍스트 색상 */
-            text-shadow: 0 1px 2px rgba(0,0,0,0.5); /* 텍스트 그림자 */
-            pointer-events: none; /* 텍스트가 클릭 이벤트를 가로채지 않게 함 */
         }
+        
+        /* SVG 지도 내부 스타일 */
+        svg { overflow: visible; } /* 호버 시 잘림 방지 */
 
         /* [지도 조각(Path) 스타일] */
         .map-region {
             stroke: #ffffff;      /* 흰색 테두리 */
-            stroke-width: 1px;    /* 테두리 두께 얇게 */
+            stroke-width: 1px;    /* 테두리 두께 */
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* 부드러운 애니메이션 */
+            vector-effect: non-scaling-stroke; /* 확대해도 테두리 두께 유지 */
         }
 
-        /* [호버 효과] */
+        /* [호버 효과] 마우스 올리면 둥실 떠오름 */
         .map-region:hover {
-            opacity: 0.9;
-            transform: translateY(-3px) scale(1.01); 
-            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.2));
+            opacity: 0.95;
+            transform: translateY(-5px) scale(1.02); /* 살짝 확대되며 위로 */
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.2)); /* 그림자 생성 */
             z-index: 100;
-            stroke-width: 2px; /* 호버 시 테두리 강조 */
+            stroke-width: 2px;
+            position: relative; /* z-index 먹히게 */
         }
         
-        /* [지역별 색상] */
-        .fill-gw { fill: #2ecc71; } .fill-gg { fill: #95a5a6; } .fill-se { fill: #34495e; }
-        .fill-cn { fill: #f1c40f; } .fill-cb { fill: #f39c12; } .fill-gb { fill: #9b59b6; }
-        .fill-gn { fill: #3498db; } .fill-bs { fill: #2980b9; } .fill-jb { fill: #e67e22; }
-        .fill-jn { fill: #d35400; } .fill-jj { fill: #1abc9c; }
-        
-        /* 서울 특별 강조 */
-        #path-se { stroke: #fff; stroke-width: 2px; z-index: 10; }
+        /* [지역별 색상 - 파스텔톤] */
+        .fill-gw { fill: #2ecc71; } /* 강원 - 초록 */
+        .fill-gg { fill: #95a5a6; } /* 경기 - 회색 */
+        .fill-se { fill: #34495e; stroke-width: 2px; z-index:10; } /* 서울 - 남색 (강조) */
+        .fill-cn { fill: #f1c40f; } /* 충남 - 노랑 */
+        .fill-cb { fill: #f39c12; } /* 충북 - 오렌지 */
+        .fill-gb { fill: #9b59b6; } /* 경북 - 보라 */
+        .fill-gn { fill: #3498db; } /* 경남 - 파랑 */
+        .fill-bs { fill: #2980b9; } /* 부산 - 진파랑 */
+        .fill-jb { fill: #e67e22; } /* 전북 - 주황 */
+        .fill-jn { fill: #d35400; } /* 전남 - 붉은주황 */
+        .fill-jj { fill: #1abc9c; } /* 제주 - 민트 */
+
+        /* [지도 위 텍스트 스타일] */
+        .map-text {
+            font-family: 'Apple SD Gothic Neo', sans-serif;
+            font-weight: 800;
+            text-anchor: middle; /* 중앙 정렬 */
+            fill: white; /* 흰색 글씨 */
+            text-shadow: 0 1px 3px rgba(0,0,0,0.6); /* 그림자 */
+            pointer-events: none; /* 텍스트가 클릭을 방해하지 않음 */
+            font-size: 16px;
+        }
+        .map-text.small { font-size: 13px; } /* 서울, 부산 작게 */
 
         
         /* [상세 페이지] */
@@ -153,31 +167,31 @@
                 <svg viewBox="0 0 500 700" xmlns="http://www.w3.org/2000/svg">
                     <g transform="translate(0, 20) scale(0.95)">
                         <g id="map-paths">
-                            <path id="path-gw" class="map-region fill-gw" d="M272,23 l44,48 l30,41 l-31,35 l-56,-10 l-35,-59 l14,-52 l34,-3 Z" onclick="loadDetail('Gangwon')"></path>
-                            <path id="path-gg" class="map-region fill-gg" d="M156,82 l50,23 l33,71 l-35,59 l-74,-30 l-50,-47 l76,-76 Z" onclick="loadDetail('Seoul')"></path>
-                            <path id="path-se" class="map-region fill-se" d="M195,135 l25,8 l10,28 l-28,5 l-15,-24 l8,-17 Z" onclick="loadDetail('Seoul')"></path>
-                            <path id="path-cb" class="map-region fill-cb" d="M239,176 l56,10 l31,27 l-8,59 l-38,21 l-53,-30 l-22,-64 l34,-23 Z" onclick="loadDetail('Chungcheong')"></path>
-                            <path id="path-cn" class="map-region fill-cn" d="M130,205 l74,30 l22,64 l-24,25 l-88,-12 l16,-107 Z" onclick="loadDetail('Chungcheong')"></path>
-                            <path id="path-gb" class="map-region fill-gb" d="M316,147 l31,-35 l82,74 l-5,133 l-55,22 l-43,-69 l38,-21 l8,-59 l-31,-27 l-25,-18 Z" onclick="loadDetail('Busan')"></path>
-                            <path id="path-jb" class="map-region fill-jb" d="M178,324 l53,30 l32,22 l-14,79 l-101,-8 l-18,-99 l24,-25 l24,1 Z" onclick="loadDetail('Jeolla')"></path>
-                            <path id="path-gn" class="map-region fill-gn" d="M263,376 l43,69 l83,-23 l-10,92 l-131,4 l14,-79 l-32,-22 l33,-41 Z" onclick="loadDetail('Busan')"></path>
-                            <path id="path-bs" class="map-region fill-bs" d="M389,422 l55,-22 l10,51 l-55,-6 l-10,-23 Z" onclick="loadDetail('Busan')"></path>
-                            <path id="path-jn" class="map-region fill-jn" d="M148,447 l101,8 l11,80 l-31,31 l-52,-2 l-19,34 l-65,-23 l12,-85 l43,-43 Z" onclick="loadDetail('Jeolla')"></path>
-                            <path id="path-jj" class="map-region fill-jj" d="M166,629 l83,-8 l13,23 l-35,18 l-69,-8 l8,-25 Z" onclick="loadDetail('Jeju')"></path>
+                            <path id="path-gw" class="map-region fill-gw" d="M305,23 l66,76 l20,115 l-56,30 l-43,-16 l-23,-76 l-53,-26 l23,-69 l66,-34 Z" onclick="loadDetail('Gangwon')"></path>
+                            <path id="path-gg" class="map-region fill-gg" d="M180,73 l53,26 l23,76 l-66,63 l-89,-23 l-33,-73 l89,-92 l23,23 Z" onclick="loadDetail('Seoul')"></path>
+                            <path id="path-se" class="map-region fill-se" d="M210,139 l30,13 l6,36 l-30,16 l-23,-23 l17,-42 Z" onclick="loadDetail('Seoul')"></path>
+                            <path id="path-cb" class="map-region fill-cb" d="M256,175 l43,16 l56,-30 l16,63 l-53,73 l-66,-6 l-20,-73 l24,-43 Z" onclick="loadDetail('Chungcheong')"></path>
+                            <path id="path-cn" class="map-region fill-cn" d="M101,215 l89,23 l20,73 l-36,69 l-99,-23 l-23,-116 l49,-26 Z" onclick="loadDetail('Chungcheong')"></path>
+                            <path id="path-gb" class="map-region fill-gb" d="M371,184 l-16,-63 l20,-115 l86,66 l3,175 l-73,63 l-66,-33 l-6,-79 l52,-14 Z" onclick="loadDetail('Busan')"></path>
+                            <path id="path-jb" class="map-region fill-jb" d="M174,380 l36,-69 l66,6 l6,79 l-56,76 l-89,13 l-59,-106 l96,1 Z" onclick="loadDetail('Jeolla')"></path>
+                            <path id="path-gn" class="map-region fill-gn" d="M282,459 l56,-76 l66,33 l73,-63 l6,119 l-112,43 l-50,-6 l-39,-50 Z" onclick="loadDetail('Busan')"></path>
+                            <path id="path-bs" class="map-region fill-bs" d="M430,436 l53,36 l-3,56 l-63,-10 l13,-82 Z" onclick="loadDetail('Busan')"></path>
+                            <path id="path-jn" class="map-region fill-jn" d="M137,506 l89,-13 l39,50 l-33,86 l-83,-16 l-69,-46 l-30,-96 l87,35 Z" onclick="loadDetail('Jeolla')"></path>
+                            <path id="path-jj" class="map-region fill-jj" d="M149,635 l99,-6 l13,33 l-63,16 l-69,-13 l20,-30 Z" onclick="loadDetail('Jeju')"></path>
                         </g>
                         
-                        <g id="map-labels" style="font-size: 18px;">
-                            <text x="290" y="90">강원</text>
-                            <text x="170" y="125">경기</text>
-                            <text x="200" y="160" style="font-size: 14px;">서울</text>
-                            <text x="260" y="230">충북</text>
-                            <text x="150" y="260">충남</text>
-                            <text x="350" y="250">경북</text>
-                            <text x="190" y="390">전북</text>
-                            <text x="310" y="440">경남</text>
-                            <text x="410" y="440" style="font-size: 14px;">부산</text>
-                            <text x="180" y="510">전남</text>
-                            <text x="210" y="650">제주</text>
+                        <g id="map-labels">
+                            <text id="txt-gw" x="330" y="100" class="map-text">Gangwon</text>
+                            <text id="txt-gg" x="190" y="120" class="map-text">Gyeonggi</text>
+                            <text id="txt-se" x="220" y="165" class="map-text small">Seoul</text>
+                            <text id="txt-cb" x="280" y="240" class="map-text">Chungbuk</text>
+                            <text id="txt-cn" x="140" y="280" class="map-text">Chungnam</text>
+                            <text id="txt-gb" x="400" y="250" class="map-text">Gyeongbuk</text>
+                            <text id="txt-jb" x="200" y="420" class="map-text">Jeonbuk</text>
+                            <text id="txt-gn" x="340" y="480" class="map-text">Gyeongnam</text>
+                            <text id="txt-bs" x="450" y="470" class="map-text small">Busan</text>
+                            <text id="txt-jn" x="180" y="550" class="map-text">Jeonnam</text>
+                            <text id="txt-jj" x="200" y="660" class="map-text">Jeju</text>
                         </g>
                     </g>
                 </svg>
@@ -289,17 +303,26 @@
                   mapT:"Select Region", mapS:"Click on the map to explore!", infoT:"📋 Travel Info & Budget", revT:"⭐ Traveler Reviews",
                   l_food:"Seasonal Food", l_trans:"Transport", l_bud:"Budget", place:"Write a review...",
                   j1:"The Druid", d1:"Nature", j2:"Gourmet Hunter", d2:"Food Trip", j3:"The Bard", d3:"Photo Spots", j4:"The Merchant", d4:"Shopping", j5:"Star Seeker", d5:"K-Wave", j6:"The Nomad", d6:"Local Life",
-                  loc:"📍 Location & Taxi", taxi:"Show Address to Driver" },
+                  loc:"📍 Location & Taxi", taxi:"Show Address to Driver",
+                  // [NEW] 지도 텍스트 번역 추가
+                  txt_gw:"Gangwon", txt_gg:"Gyeonggi", txt_se:"Seoul", txt_cb:"Chungbuk", txt_cn:"Chungnam", txt_gb:"Gyeongbuk", txt_gn:"Gyeongnam", txt_bs:"Busan", txt_jb:"Jeonbuk", txt_jn:"Jeonnam", txt_jj:"Jeju"
+            },
             kr: { home:"당신만 모르는 진짜 한국.", start:"여행 시작하기 🚀", jobT:"여행 직업 선택", jobS:"당신의 여행 스타일은?", 
                   mapT:"지역 선택", mapS:"지도를 클릭해서 탐험을 시작하세요!", infoT:"📋 여행 정보 및 경비", revT:"⭐ 여행자 실시간 리뷰",
                   l_food:"제철 음식", l_trans:"교통편", l_bud:"예상 경비", place:"후기를 남겨주세요...",
                   j1:"더 드루이드", d1:"숨겨진 자연", j2:"고메 헌터", d2:"제철 미식 여행", j3:"더 바드", d3:"인생샷 명소", j4:"더 머천트", d4:"쇼핑 & 굿즈", j5:"스타 시커", d5:"한류 성지순례", j6:"더 노마드", d6:"현지인 체험",
-                  loc:"📍 위치 및 택시 주소", taxi:"택시 기사님께 주소 보여주기" },
+                  loc:"📍 위치 및 택시 주소", taxi:"택시 기사님께 주소 보여주기",
+                  // [NEW] 지도 텍스트 번역 추가
+                  txt_gw:"강원", txt_gg:"경기", txt_se:"서울", txt_cb:"충북", txt_cn:"충남", txt_gb:"경북", txt_gn:"경남", txt_bs:"부산", txt_jb:"전북", txt_jn:"전남", txt_jj:"제주"
+            },
             jp: { home:"あなただけが知らない韓国。", start:"旅を始める 🚀", jobT:"クラス選択", jobS:"旅行スタイルは？", 
                   mapT:"地域選択", mapS:"地図をクリックして探索！", infoT:"📋 旅行情報 & 予算", revT:"⭐ 旅行者のレビュー",
                   l_food:"旬の食べ物", l_trans:"交通手段", l_bud:"予算", place:"レビューを書いて...",
                   j1:"ドルイド", d1:"隠れた自然", j2:"グルメハンター", d2:"旬の美食の旅", j3:"バード", d3:"映えスポット", j4:"マーチャント", d4:"ショッピング", j5:"スターシーカー", d5:"K-POP聖地", j6:"ノマド", d6:"現地体験",
-                  loc:"📍 位置情報 & タクシー", taxi:"タクシー運転手に見せる" }
+                  loc:"📍 位置情報 & タクシー", taxi:"タクシー運転手に見せる",
+                  // [NEW] 지도 텍스트 번역 추가
+                  txt_gw:"江原", txt_gg:"京畿", txt_se:"ソウル", txt_cb:"忠北", txt_cn:"忠南", txt_gb:"慶北", txt_gn:"慶南", txt_bs:"釜山", txt_jb:"全北", txt_jn:"全南", txt_jj:"済州"
+            }
         };
 
         function selectClass(className) {
@@ -323,6 +346,7 @@
             btn.classList.add('active');
             
             const t = uiDB[lang];
+            // UI 텍스트 업데이트
             document.getElementById('t-home-desc').innerText = t.home;
             document.getElementById('t-start').innerText = t.start;
             document.getElementById('t-job-title').innerText = t.jobT;
@@ -338,11 +362,22 @@
             document.getElementById('t-map-sec').innerText = t.loc;
             document.getElementById('t-taxi-btn').innerText = t.taxi;
 
+            // 직업 카드 텍스트 업데이트
             for(let i=1; i<=6; i++) {
                 if(document.getElementById(`j${i}`)) document.getElementById(`j${i}`).innerText = t[`j${i}`];
                 if(document.getElementById(`d${i}`)) document.getElementById(`d${i}`).innerText = t[`d${i}`];
             }
 
+            // [NEW] 지도 위 텍스트 다국어 업데이트 (핵심!)
+            const regionIds = ['gw', 'gg', 'se', 'cb', 'cn', 'gb', 'gn', 'bs', 'jb', 'jn', 'jj'];
+            regionIds.forEach(id => {
+                const textElement = document.getElementById(`txt-${id}`);
+                if (textElement && t[`txt_${id}`]) {
+                    textElement.textContent = t[`txt_${id}`];
+                }
+            });
+
+            // 상세 페이지 내용 업데이트
             if(currentRegion && !document.getElementById('screen-detail').classList.contains('hidden')) {
                 const rData = regionDB[currentRegion][lang];
                 if(rData) {
@@ -400,6 +435,11 @@
             input.value = "";
             alert("Review Posted!");
         }
+        
+        // 초기 언어 설정 실행 (페이지 로드 시 텍스트 세팅)
+        window.onload = function() {
+            setLang('en', document.querySelector('.lang-btn.active'));
+        };
     </script>
 </body>
 </html>
