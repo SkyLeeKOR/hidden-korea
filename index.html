@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hidden Korea - Travel Guide</title>
     <style>
-        /* [기본 설정 & CSS 변수] */
+        /* [스타일 설정은 이전과 동일합니다] */
         :root {
             --bg-color: #f8f9fa;
             --primary: #222;
@@ -17,29 +17,17 @@
             background-color: var(--bg-color);
             margin: 0; color: var(--primary);
         }
-        
-        /* [핵심 수정] 다시 1200px로 넓혔습니다! */
         .app-container {
-            width: 90%; 
-            max-width: 1200px; /* PC 화면에 꽉 차게 */
-            margin: 0 auto; 
-            min-height: 100vh; 
-            display: flex; 
-            flex-direction: column; 
-            position: relative;
+            width: 90%; max-width: 1200px; margin: 0 auto; 
+            min-height: 100vh; display: flex; flex-direction: column; position: relative;
         }
-
         .screen {
-            padding: 40px 0; 
-            flex: 1; 
-            display: flex;
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; /* 세로 중앙 정렬 */
+            padding: 40px 0; flex: 1; display: flex;
+            flex-direction: column; align-items: center; justify-content: center;
         }
         .hidden { display: none !important; }
 
-        /* [상단 버튼 & UI] */
+        /* [버튼 & UI] */
         .lang-bar { position: absolute; top: 20px; right: 0; z-index: 10; }
         .lang-btn {
             background: white; border: 1px solid #ddd; border-radius: 20px;
@@ -58,18 +46,18 @@
         .header-title { font-size: 2.8rem; font-weight: 800; margin: 0; text-align: center; color: #111;}
         .header-sub { font-size: 1.2rem; color: #666; margin-top: 10px; text-align: center; margin-bottom: 50px;}
 
-        /* [그리드 레이아웃 - 3열 유지] */
+        /* [그리드 레이아웃] */
         .grid-box {
             display: grid; width: 100%; gap: 25px;
-            grid-template-columns: repeat(3, 1fr); /* PC는 3칸 */
+            grid-template-columns: repeat(3, 1fr);
         }
-        @media (max-width: 900px) { .grid-box { grid-template-columns: repeat(2, 1fr); } } /* 태블릿 2칸 */
-        @media (max-width: 600px) { .grid-box { grid-template-columns: 1fr; } } /* 폰 1칸 */
+        @media (max-width: 900px) { .grid-box { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 600px) { .grid-box { grid-template-columns: 1fr; } }
 
-        /* [카드 디자인] */
+        /* [카드] */
         .card {
             background: white; border-radius: 20px; padding: 40px 20px;
-            text-align: center; cursor: pointer; transition: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            text-align: center; cursor: pointer; transition: 0.3s;
             box-shadow: var(--card-shadow); border: 1px solid transparent;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             height: 100%; min-height: 220px;
@@ -79,9 +67,9 @@
         .card-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 10px; color: #333; }
         .card-desc { font-size: 1rem; color: #888; }
 
-        /* [지역 선택 카드 (이미지)] */
+        /* [지역 선택 카드] */
         .region-card { padding: 0; height: 300px; overflow: hidden; position: relative; border-radius: 20px; }
-        .region-img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+        .region-img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; background-color: #eee; }
         .region-overlay {
             position: absolute; bottom: 0; width: 100%; left: 0;
             background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
@@ -91,14 +79,13 @@
         .region-food { font-size: 1rem; opacity: 0.9; margin-top: 5px; display: block;}
         .region-card:hover .region-img { transform: scale(1.1); }
 
-        /* [상세 페이지 디자인 - 중앙 정렬] */
+        /* [상세 페이지] */
         .detail-container {
-            width: 100%; max-width: 800px; /* 상세 내용은 너무 퍼지지 않게 중앙 집중 */
-            display: flex; flex-direction: column; align-items: center;
+            width: 100%; max-width: 800px; display: flex; flex-direction: column; align-items: center;
         }
         .detail-header-img {
             width: 100%; height: 350px; object-fit: cover; border-radius: 25px; margin-bottom: 30px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15); background-color: #eee;
         }
         .info-section {
             background: white; border-radius: 20px; padding: 30px; width: 100%;
@@ -109,7 +96,7 @@
         .info-label { color: #777; font-weight: 600; }
         .info-val { text-align: right; color: #222; font-weight: 500;}
         
-        /* [소셜 리뷰 시스템] */
+        /* [리뷰] */
         .review-input-area {
             display: flex; gap: 10px; margin-bottom: 25px;
             background: #f1f3f5; padding: 20px; border-radius: 15px;
@@ -166,23 +153,23 @@
 
             <div class="grid-box">
                 <div class="card region-card" onclick="loadDetail('Jeolla')">
-                    <img src="https://images.unsplash.com/photo-1583224964978-2257b96070d3?auto=format&fit=crop&w=800&q=80" class="region-img">
+                    <img src="https://images.unsplash.com/photo-1552604660-a8c4dde15b2e?auto=format&fit=crop&w=800&q=80" class="region-img">
                     <div class="region-overlay"><span class="region-name" id="rn-jeolla">Jeolla</span><span class="region-food" id="rf-jeolla">Bibimbap</span></div>
                 </div>
                 <div class="card region-card" onclick="loadDetail('Seoul')">
-                    <img src="https://images.unsplash.com/photo-1580651315530-69c8e0026377?auto=format&fit=crop&w=800&q=80" class="region-img">
+                    <img src="https://images.unsplash.com/photo-1538485399081-7191377e8241?auto=format&fit=crop&w=800&q=80" class="region-img">
                     <div class="region-overlay"><span class="region-name" id="rn-seoul">Seoul</span><span class="region-food" id="rf-seoul">Street Food</span></div>
                 </div>
                 <div class="card region-card" onclick="alert('Try Jeolla or Seoul!')">
-                    <img src="https://images.unsplash.com/photo-1548115184-bc6544d06a58?auto=format&fit=crop&w=800&q=80" class="region-img">
+                    <img src="https://images.unsplash.com/photo-1534994236353-8d99883de08d?auto=format&fit=crop&w=800&q=80" class="region-img">
                     <div class="region-overlay"><span class="region-name" id="rn-jeju">Jeju</span><span class="region-food" id="rf-jeju">Black Pork</span></div>
                 </div>
                  <div class="card region-card" onclick="alert('Gangwon!')">
-                    <img src="https://images.unsplash.com/photo-1629814467204-511598f80459?auto=format&fit=crop&w=800&q=80" class="region-img">
+                    <img src="https://images.unsplash.com/photo-1528659103852-5c2c7c5952d7?auto=format&fit=crop&w=800&q=80" class="region-img">
                     <div class="region-overlay"><span class="region-name" id="rn-gangwon">Gangwon</span><span class="region-food" id="rf-gangwon">Tofu</span></div>
                 </div>
                  <div class="card region-card" onclick="alert('Busan!')">
-                    <img src="https://images.unsplash.com/photo-1596450503070-5b56501726cb?auto=format&fit=crop&w=800&q=80" class="region-img">
+                    <img src="https://images.unsplash.com/photo-1629814467204-511598f80459?auto=format&fit=crop&w=800&q=80" class="region-img">
                     <div class="region-overlay"><span class="region-name" id="rn-busan">Busan</span><span class="region-food" id="rf-busan">Seafood</span></div>
                 </div>
                  <div class="card region-card" onclick="alert('Chungcheong!')">
@@ -207,7 +194,6 @@
 
                 <div class="info-section review-box">
                     <div class="info-title" id="t-review-title">⭐ Traveler Reviews</div>
-                    
                     <div class="review-input-area">
                         <select id="r-star-input" class="star-select">
                             <option value="5">⭐⭐⭐⭐⭐</option>
@@ -217,9 +203,7 @@
                         <input type="text" id="r-text-input" class="comment-input" placeholder="Write a review...">
                         <button class="post-btn" onclick="addReview()">Post</button>
                     </div>
-
-                    <ul id="review-list" class="review-list">
-                        </ul>
+                    <ul id="review-list" class="review-list"></ul>
                 </div>
 
                 <button onclick="goScreen('food-map')" style="margin-top:30px; padding:15px 40px; border-radius:30px; border:1px solid #ccc; background:white; cursor:pointer; font-weight:bold; font-size: 1rem;">⬅ Back to Map</button>
@@ -230,11 +214,11 @@
 
     <script>
         let currentLang = 'en';
+        let currentRegion = null; // [중요] 현재 보고 있는 지역을 기억하는 변수
 
-        // 데이터베이스 (지역 상세 정보 + 초기 리뷰)
         const regionDB = {
             Jeolla: {
-                img: "https://images.unsplash.com/photo-1583224964978-2257b96070d3?auto=format&fit=crop&w=800&q=80",
+                img: "https://images.unsplash.com/photo-1552604660-a8c4dde15b2e?auto=format&fit=crop&w=800&q=80",
                 en: { name:"Jeolla Province", food:"Cockle & Bibimbap", trans:"KTX (3h from Seoul)", bud:"$150 / person" },
                 kr: { name:"전라도 미식여행", food:"벌교 꼬막 & 전주 비빔밥", trans:"KTX (용산역 출발 3시간)", bud:"약 18만원 / 1인" },
                 jp: { name:"全羅道 (チョルラド)", food:"ハイガイ & ビビンバ", trans:"KTX (ソウルから3時間)", bud:"約 18,000円 / 1人" },
@@ -244,7 +228,7 @@
                 ]
             },
             Seoul: {
-                img: "https://images.unsplash.com/photo-1580651315530-69c8e0026377?auto=format&fit=crop&w=800&q=80",
+                img: "https://images.unsplash.com/photo-1538485399081-7191377e8241?auto=format&fit=crop&w=800&q=80",
                 en: { name:"Seoul City", food:"Tteokbokki & Galbi", trans:"Subway & Bus", bud:"$80 / person" },
                 kr: { name:"서울 시티 투어", food:"광장시장 떡볶이 & 갈비", trans:"지하철 및 버스", bud:"약 10만원 / 1인" },
                 jp: { name:"ソウル", food:"トッポッキ & カルビ", trans:"地下鉄 & バス", bud:"約 10,000円 / 1人" },
@@ -255,7 +239,6 @@
             }
         };
 
-        // UI 텍스트 번역 DB
         const uiDB = {
             en: { home:"Discover the real Korea.", start:"Start Journey 🚀", jobT:"Select Your Class", jobS:"Choose your travel style", 
                   mapT:"Select Region", mapS:"Where will you hunt for flavor?", infoT:"📋 Travel Info & Budget", revT:"⭐ Traveler Reviews",
@@ -277,20 +260,20 @@
                 }
         };
 
-        // 화면 이동
         function goScreen(screenName) {
             document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
             document.getElementById(`screen-${screenName}`).classList.remove('hidden');
+            window.scrollTo(0,0);
         }
 
-        // 언어 변경
         function setLang(lang, btn) {
             currentLang = lang;
             document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             
-            // 공통 UI 업데이트
             const t = uiDB[lang];
+            
+            // 1. 공통 UI 업데이트
             document.getElementById('t-home-desc').innerText = t.home;
             document.getElementById('t-start').innerText = t.start;
             document.getElementById('t-job-title').innerText = t.jobT;
@@ -299,13 +282,12 @@
             document.getElementById('t-map-sub').innerText = t.mapS;
             document.getElementById('t-info-title').innerText = t.infoT;
             document.getElementById('t-review-title').innerText = t.revT;
-            
             document.getElementById('l-food').innerText = t.l_food;
             document.getElementById('l-transport').innerText = t.l_trans;
             document.getElementById('l-budget').innerText = t.l_bud;
             document.getElementById('r-text-input').placeholder = t.place;
 
-            // 직업 & 지역 텍스트 업데이트
+            // 2. 직업/지역 텍스트 업데이트
             for(let i=1; i<=6; i++) {
                 if(document.getElementById(`j${i}`)) document.getElementById(`j${i}`).innerText = t[`j${i}`];
                 if(document.getElementById(`d${i}`)) document.getElementById(`d${i}`).innerText = t[`d${i}`];
@@ -324,21 +306,30 @@
                 document.getElementById('rn-chung').innerText = t.rn_chung;
                 document.getElementById('rf-chung').innerText = t.rf_chung;
             }
+
+            // 3. [핵심 수정] 만약 현재 상세 페이지를 보고 있다면, 그 내용도 즉시 번역
+            if(currentRegion && !document.getElementById('screen-detail').classList.contains('hidden')) {
+                const rData = regionDB[currentRegion][lang];
+                if(rData) {
+                    document.getElementById('d-title').innerText = rData.name;
+                    document.getElementById('d-food').innerText = rData.food;
+                    document.getElementById('d-transport').innerText = rData.trans;
+                    document.getElementById('d-budget').innerText = rData.bud;
+                }
+            }
         }
 
-        // 상세 페이지 로딩 함수
         function loadDetail(regionName) {
+            currentRegion = regionName; // [핵심] 현재 선택된 지역 저장
             const data = regionDB[regionName];
             const t = data[currentLang];
 
-            // 1. 이미지 & 정보 채우기
             document.getElementById('d-img').src = data.img;
             document.getElementById('d-title').innerText = t.name;
             document.getElementById('d-food').innerText = t.food;
             document.getElementById('d-transport').innerText = t.trans;
             document.getElementById('d-budget').innerText = t.bud;
 
-            // 2. 리뷰 리스트 초기화 & 채우기
             const list = document.getElementById('review-list');
             list.innerHTML = ""; 
             
@@ -358,12 +349,9 @@
                 list.appendChild(li);
             });
 
-            // 화면 이동
             goScreen('detail');
-            window.scrollTo(0, 0); // 화면 맨 위로 이동
         }
 
-        // 리뷰 등록하기 (시뮬레이션)
         function addReview() {
             const input = document.getElementById('r-text-input');
             const starSelect = document.getElementById('r-star-input');
