@@ -23,7 +23,6 @@
         .btn-main { padding: 18px 50px; background: #111; color: white; border: none; border-radius: 100px; font-size: 1.4rem; font-weight: bold; cursor: pointer; transition: 0.2s; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
         .btn-main:hover { transform: translateY(-3px); }
 
-        /* [텍스트] */
         .header-title { font-size: 2.5rem; font-weight: 800; margin: 0; text-align: center; color: #111;}
         .header-sub { font-size: 1.2rem; color: #666; margin-top: 10px; text-align: center; margin-bottom: 40px;}
 
@@ -35,55 +34,54 @@
         .card-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 10px; color: #333; }
         .card-desc { font-size: 1rem; color: #888; }
 
-        /* [NEW! 한국 블록 지도 스타일] */
+        /* [NEW! 수정된 지도 스타일 - 좌표 고정 방식] */
         .korea-map-container {
             display: grid;
-            gap: 10px;
+            gap: 8px;
             width: 100%;
-            max-width: 500px; /* 지도가 너무 커지지 않게 제한 */
-            aspect-ratio: 3/4; /* 지도 비율 유지 */
-            /* 4열 6행 그리드로 한반도 모양 흉내 */
+            max-width: 400px; /* 지도 크기 적당하게 제한 */
+            /* 4칸 x 8줄의 바둑판 생성 */
             grid-template-columns: repeat(4, 1fr);
-            grid-template-rows: repeat(8, 1fr);
-            grid-template-areas:
-                "gg gg gw gw"
-                "gg gg gw gw"
-                "cn se cb gb"
-                "cn cb cb gb"
-                "jb jb gn bs"
-                "jn jn gn bs"
-                "jn jn .  ."
-                ".  jj jj .";
+            grid-template-rows: repeat(8, 60px); /* 높이 강제 지정 (깨짐 방지) */
+            margin-bottom: 30px;
         }
 
         .map-block {
             border: none; border-radius: 12px;
-            font-size: 1.1rem; font-weight: 800; color: white;
+            font-size: 1rem; font-weight: 800; color: white;
             cursor: pointer; transition: 0.2s;
             display: flex; align-items: center; justify-content: center;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-            padding: 5px;
+            padding: 5px; text-transform: capitalize;
         }
         .map-block:hover { transform: scale(1.05); filter: brightness(1.1); z-index: 2; }
-        .map-block:active { transform: scale(0.95); }
-
-        /* 지역별 색상 및 위치 지정 */
-        .area-gg { grid-area: gg; background-color: #95a5a6; } /* 경기 (회색) */
-        .area-gw { grid-area: gw; background-color: #2ecc71; } /* 강원 (초록) */
-        .area-se { grid-area: se; background-color: #34495e; border: 3px solid white; z-index: 5;} /* 서울 (진한남색, 강조) */
-        .area-cn { grid-area: cn; background-color: #f1c40f; color: #333; text-shadow:none;} /* 충남 (노랑) */
-        .area-cb { grid-area: cb; background-color: #f39c12; } /* 충북 (오렌지) */
-        .area-gb { grid-area: gb; background-color: #9b59b6; } /* 경북 (보라) */
-        .area-jb { grid-area: jb; background-color: #e67e22; } /* 전북 (주황) */
-        .area-jn { grid-area: jn; background-color: #d35400; } /* 전남 (진한주황) */
-        .area-gn { grid-area: gn; background-color: #3498db; } /* 경남 (파랑) */
-        .area-bs { grid-area: bs; background-color: #2980b9; } /* 부산 (진한파랑) */
-        .area-jj { grid-area: jj; background-color: #1abc9c; } /* 제주 (민트) */
-
-        @media (max-width: 600px) {
-            .map-block { font-size: 0.9rem; }
-        }
+        
+        /* 좌표 지정 (Grid Line) */
+        /* 경기: 1~3행, 1~3열 */
+        .area-gg { grid-row: 1 / 3; grid-column: 1 / 3; background-color: #95a5a6; }
+        /* 강원: 1~3행, 3~5열 */
+        .area-gw { grid-row: 1 / 3; grid-column: 3 / 5; background-color: #2ecc71; }
+        /* 충남: 3~5행, 1열 */
+        .area-cn { grid-row: 3 / 5; grid-column: 1 / 2; background-color: #f1c40f; color: #333; text-shadow:none;}
+        /* 서울: 3행, 2열 (경기/충청 사이) */
+        .area-se { grid-row: 3 / 4; grid-column: 2 / 3; background-color: #34495e; border: 3px solid white; z-index: 5;}
+        /* 충북: 3행 3열 + 4행 2~4열? -> 단순화: 3~5행, 2~4열 중 서울/경북 제외하고 배치 */
+        /* 충북 단순화: 3~5행의 가운데 */
+        .area-cb { grid-row: 4 / 5; grid-column: 2 / 4; background-color: #f39c12; }
+        /* 경북: 3~5행, 4열 */
+        .area-gb { grid-row: 3 / 5; grid-column: 4 / 5; background-color: #9b59b6; }
+        
+        /* 전북: 5행, 1~3열 */
+        .area-jb { grid-row: 5 / 6; grid-column: 1 / 3; background-color: #e67e22; }
+        /* 경남: 5~7행, 3열 */
+        .area-gn { grid-row: 5 / 7; grid-column: 3 / 4; background-color: #3498db; }
+        /* 부산: 5~7행, 4열 */
+        .area-bs { grid-row: 5 / 7; grid-column: 4 / 5; background-color: #2980b9; }
+        /* 전남: 6~8행, 1~3열 */
+        .area-jn { grid-row: 6 / 8; grid-column: 1 / 3; background-color: #d35400; }
+        /* 제주: 8행, 2~4열 */
+        .area-jj { grid-row: 8 / 9; grid-column: 2 / 4; background-color: #1abc9c; }
 
 
         /* [상세 페이지] */
@@ -139,8 +137,14 @@
             <p class="header-sub" id="t-job-sub">Choose your travel style</p>
 
             <div class="grid-box">
-                <div class="card" onclick="alert('Coming Soon!')"><span class="card-icon">🍃</span><span class="card-title" id="j1">The Druid</span><span class="card-desc" id="d1">Nature</span></div>
-                <div class="card" onclick="goScreen('food-map')"><span class="card-icon">🍽️</span><span class="card-title" id="j2">Gourmet Hunter</span><span class="card-desc" id="d2">Food Trip</span></div>
+                <div class="card" onclick="selectClass('Druid')">
+                    <span class="card-icon">🍃</span>
+                    <span class="card-title" id="j1">The Druid</span><span class="card-desc" id="d1">Nature</span>
+                </div>
+                <div class="card" onclick="selectClass('Gourmet')">
+                    <span class="card-icon">🍽️</span>
+                    <span class="card-title" id="j2">Gourmet Hunter</span><span class="card-desc" id="d2">Food Trip</span>
+                </div>
                 <div class="card" onclick="alert('Coming Soon!')"><span class="card-icon">📸</span><span class="card-title" id="j3">The Bard</span><span class="card-desc" id="d3">Photo Spots</span></div>
                 <div class="card" onclick="alert('Coming Soon!')"><span class="card-icon">🛍️</span><span class="card-title" id="j4">The Merchant</span><span class="card-desc" id="d4">Shopping</span></div>
                 <div class="card" onclick="alert('Coming Soon!')"><span class="card-icon">🌟</span><span class="card-title" id="j5">Star Seeker</span><span class="card-desc" id="d5">K-Wave</span></div>
@@ -153,11 +157,13 @@
             <p class="header-sub" id="t-map-sub">Where will you hunt for flavor?</p>
 
             <div class="korea-map-container">
-                <button class="map-block area-gg" onclick="loadDetail('Seoul')">Gyeonggi</button> <button class="map-block area-gw" onclick="loadDetail('Gangwon')">Gangwon</button>
+                <button class="map-block area-gg" onclick="loadDetail('Seoul')">Gyeonggi</button>
+                <button class="map-block area-gw" onclick="loadDetail('Gangwon')">Gangwon</button>
                 <button class="map-block area-se" onclick="loadDetail('Seoul')">Seoul</button>
                 <button class="map-block area-cn" onclick="loadDetail('Chungcheong')">Chungnam</button>
                 <button class="map-block area-cb" onclick="loadDetail('Chungcheong')">Chungbuk</button>
-                <button class="map-block area-gb" onclick="loadDetail('Busan')">Gyeongbuk</button> <button class="map-block area-jb" onclick="loadDetail('Jeolla')">Jeonbuk</button>
+                <button class="map-block area-gb" onclick="loadDetail('Busan')">Gyeongbuk</button>
+                <button class="map-block area-jb" onclick="loadDetail('Jeolla')">Jeonbuk</button>
                 <button class="map-block area-jn" onclick="loadDetail('Jeolla')">Jeonnam</button>
                 <button class="map-block area-gn" onclick="loadDetail('Busan')">Gyeongnam</button>
                 <button class="map-block area-bs" onclick="loadDetail('Busan')">Busan</button>
@@ -194,7 +200,6 @@
                     </div>
                     <ul id="review-list" class="review-list"></ul>
                 </div>
-
                 <button onclick="goScreen('food-map')" style="margin-top:30px; padding:15px 40px; border-radius:30px; border:1px solid #ccc; background:white; cursor:pointer; font-weight:bold; font-size: 1rem;">⬅ Back to Map</button>
             </div>
         </div>
@@ -212,12 +217,12 @@
     <script>
         let currentLang = 'en';
         let currentRegion = null;
+        let currentClass = 'Gourmet'; // 기본 직업
         let map = null; let marker = null;
 
-        // [데이터] 
-        // 11개 지역을 다 채우기 전까지, 비슷한 지역은 같은 데이터를 쓰도록 연결했습니다.
+        // [데이터]
         const regionDB = {
-            Jeolla: { // 전남, 전북 공용
+            Jeolla: { 
                 img: "https://images.unsplash.com/photo-1552604660-a8c4dde15b2e?auto=format&fit=crop&w=800&q=80",
                 lat: 35.8147, lng: 127.1526, addr: "기사님,<br>전주 한옥마을로<br>가주세요.",
                 en: { name:"Jeolla Province", food:"Cockle & Bibimbap", trans:"KTX (3h from Seoul)", bud:"$150 / person" },
@@ -225,7 +230,7 @@
                 jp: { name:"全羅道", food:"ハイガイ & ビビンバ", trans:"KTX (ソウルから3時間)", bud:"約 18,000円 / 1人" },
                 reviews: [{user: "Kim", star: 5, text: "The food is amazing!"}]
             },
-            Seoul: { // 서울, 경기 공용
+            Seoul: {
                 img: "https://images.unsplash.com/photo-1538485399081-7191377e8241?auto=format&fit=crop&w=800&q=80",
                 lat: 37.5701, lng: 126.9997, addr: "기사님,<br>광장시장으로<br>가주세요.",
                 en: { name:"Seoul & Gyeonggi", food:"Street Food & Galbi", trans:"Subway & Bus", bud:"$80 / person" },
@@ -233,7 +238,7 @@
                 jp: { name:"ソウル/京畿道", food:"屋台料理 & カルビ", trans:"地下鉄 & バス", bud:"約 10,000円 / 1人" },
                 reviews: [{user: "Lee", star: 5, text: "Night life is good."}]
             },
-            Gangwon: { // 강원
+            Gangwon: {
                 img: "https://images.unsplash.com/photo-1528659103852-5c2c7c5952d7?auto=format&fit=crop&w=800&q=80",
                 lat: 37.8813, lng: 127.7298, addr: "기사님,<br>춘천 닭갈비 골목으로<br>가주세요.",
                 en: { name:"Gangwon Province", food:"Spicy Chicken (Dakgalbi)", trans:"ITX Train", bud:"$100 / person" },
@@ -241,7 +246,7 @@
                 jp: { name:"江原道", food:"タッカルビ", trans:"ITX 列車", bud:"約 12,000円 / 1人" },
                 reviews: [{user: "Park", star: 4, text: "Spicy but delicious."}]
             },
-            Chungcheong: { // 충남, 충북 공용
+            Chungcheong: {
                 img: "https://images.unsplash.com/photo-1613568770467-33f7c35f2991?auto=format&fit=crop&w=800&q=80",
                 lat: 36.6350, lng: 127.4914, addr: "기사님,<br>성심당 빵집으로<br>가주세요.",
                 en: { name:"Chungcheong", food:"Walnut Cookie & Bread", trans:"Bus / KTX", bud:"$90 / person" },
@@ -249,7 +254,7 @@
                 jp: { name:"忠清道", food:"くるみ饅頭 & パン", trans:"バス / KTX", bud:"約 11,000円 / 1人" },
                 reviews: [{user: "Choi", star: 5, text: "Bread is famous here."}]
             },
-            Busan: { // 부산, 경남, 경북 공용
+            Busan: {
                 img: "https://images.unsplash.com/photo-1629814467204-511598f80459?auto=format&fit=crop&w=800&q=80",
                 lat: 35.1554, lng: 129.0594, addr: "기사님,<br>서면 국밥골목으로<br>가주세요.",
                 en: { name:"Busan & Gyeongsang", food:"Pork Soup & Seafood", trans:"KTX (2.5h)", bud:"$130 / person" },
@@ -257,7 +262,7 @@
                 jp: { name:"釜山 & 慶尚道", food:"デジクッパ & 刺身", trans:"KTX (2.5時間)", bud:"約 16,000円 / 1人" },
                 reviews: [{user: "Sato", star: 5, text: "Fresh seafood!"}]
             },
-            Jeju: { // 제주
+            Jeju: {
                 img: "https://images.unsplash.com/photo-1534994236353-8d99883de08d?auto=format&fit=crop&w=800&q=80",
                 lat: 33.4996, lng: 126.5312, addr: "기사님,<br>흑돼지 거리로<br>가주세요.",
                 en: { name:"Jeju Island", food:"Black Pork BBQ", trans:"Airplane", bud:"$200 / person" },
@@ -285,6 +290,19 @@
                   loc:"📍 位置情報 & タクシー", taxi:"タクシー運転手に見せる" }
         };
 
+        // 직업 선택 및 화면 전환
+        function selectClass(className) {
+            currentClass = className;
+            // 테마 색상 변경 (드루이드:초록, 고메:빨강)
+            const root = document.documentElement;
+            if(className === 'Druid') {
+                root.style.setProperty('--accent', '#27ae60'); // 초록색
+            } else {
+                root.style.setProperty('--accent', '#d32f2f'); // 빨간색
+            }
+            goScreen('food-map');
+        }
+
         function goScreen(screenName) {
             document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
             document.getElementById(`screen-${screenName}`).classList.remove('hidden');
@@ -298,6 +316,7 @@
             btn.classList.add('active');
             
             const t = uiDB[lang];
+            // 텍스트 업데이트 (UI)
             document.getElementById('t-home-desc').innerText = t.home;
             document.getElementById('t-start').innerText = t.start;
             document.getElementById('t-job-title').innerText = t.jobT;
@@ -318,6 +337,7 @@
                 if(document.getElementById(`d${i}`)) document.getElementById(`d${i}`).innerText = t[`d${i}`];
             }
 
+            // 만약 상세 페이지를 보고 있다면 상세 내용도 번역
             if(currentRegion && !document.getElementById('screen-detail').classList.contains('hidden')) {
                 const rData = regionDB[currentRegion][lang];
                 if(rData) {
