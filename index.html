@@ -4,64 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hidden Korea - Travel Guide</title>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
     <style>
-        /* [스타일 설정은 이전과 동일합니다] */
-        :root {
-            --bg-color: #f8f9fa;
-            --primary: #222;
-            --accent: #d32f2f;
-            --card-shadow: 0 4px 15px rgba(0,0,0,0.08);
-        }
-        body {
-            font-family: 'Apple SD Gothic Neo', sans-serif;
-            background-color: var(--bg-color);
-            margin: 0; color: var(--primary);
-        }
-        .app-container {
-            width: 90%; max-width: 1200px; margin: 0 auto; 
-            min-height: 100vh; display: flex; flex-direction: column; position: relative;
-        }
-        .screen {
-            padding: 40px 0; flex: 1; display: flex;
-            flex-direction: column; align-items: center; justify-content: center;
-        }
+        /* [기본 설정] */
+        :root { --bg-color: #f8f9fa; --primary: #222; --accent: #d32f2f; --card-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        body { font-family: 'Apple SD Gothic Neo', sans-serif; background-color: var(--bg-color); margin: 0; color: var(--primary); }
+        .app-container { width: 90%; max-width: 1200px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; position: relative; }
+        .screen { padding: 40px 0; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .hidden { display: none !important; }
 
         /* [버튼 & UI] */
         .lang-bar { position: absolute; top: 20px; right: 0; z-index: 10; }
-        .lang-btn {
-            background: white; border: 1px solid #ddd; border-radius: 20px;
-            padding: 8px 16px; font-size: 14px; cursor: pointer; font-weight: bold; color: #777; transition: 0.2s;
-        }
+        .lang-btn { background: white; border: 1px solid #ddd; border-radius: 20px; padding: 8px 16px; font-size: 14px; cursor: pointer; font-weight: bold; color: #777; transition: 0.2s; }
         .lang-btn:hover { background: #eee; }
         .lang-btn.active { background: #333; color: white; border-color: #333; }
 
-        .btn-main {
-            padding: 18px 50px; background: #111; color: white; border: none;
-            border-radius: 100px; font-size: 1.4rem; font-weight: bold; cursor: pointer;
-            transition: 0.2s; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
+        .btn-main { padding: 18px 50px; background: #111; color: white; border: none; border-radius: 100px; font-size: 1.4rem; font-weight: bold; cursor: pointer; transition: 0.2s; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
         .btn-main:hover { transform: translateY(-3px); }
 
         .header-title { font-size: 2.8rem; font-weight: 800; margin: 0; text-align: center; color: #111;}
         .header-sub { font-size: 1.2rem; color: #666; margin-top: 10px; text-align: center; margin-bottom: 50px;}
 
         /* [그리드 레이아웃] */
-        .grid-box {
-            display: grid; width: 100%; gap: 25px;
-            grid-template-columns: repeat(3, 1fr);
-        }
+        .grid-box { display: grid; width: 100%; gap: 25px; grid-template-columns: repeat(3, 1fr); }
         @media (max-width: 900px) { .grid-box { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 600px) { .grid-box { grid-template-columns: 1fr; } }
 
         /* [카드] */
-        .card {
-            background: white; border-radius: 20px; padding: 40px 20px;
-            text-align: center; cursor: pointer; transition: 0.3s;
-            box-shadow: var(--card-shadow); border: 1px solid transparent;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            height: 100%; min-height: 220px;
-        }
+        .card { background: white; border-radius: 20px; padding: 40px 20px; text-align: center; cursor: pointer; transition: 0.3s; box-shadow: var(--card-shadow); border: 1px solid transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; min-height: 220px; }
         .card:hover { transform: translateY(-10px); box-shadow: 0 15px 30px rgba(0,0,0,0.15); border-color: #ddd; }
         .card-icon { font-size: 50px; margin-bottom: 20px; }
         .card-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 10px; color: #333; }
@@ -70,47 +43,43 @@
         /* [지역 선택 카드] */
         .region-card { padding: 0; height: 300px; overflow: hidden; position: relative; border-radius: 20px; }
         .region-img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; background-color: #eee; }
-        .region-overlay {
-            position: absolute; bottom: 0; width: 100%; left: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
-            padding: 30px 25px; color: white; text-align: left; box-sizing: border-box;
-        }
+        .region-overlay { position: absolute; bottom: 0; width: 100%; left: 0; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); padding: 30px 25px; color: white; text-align: left; box-sizing: border-box; }
         .region-name { font-size: 1.8rem; font-weight: bold; display: block; text-shadow: 0 2px 5px rgba(0,0,0,0.5); }
         .region-food { font-size: 1rem; opacity: 0.9; margin-top: 5px; display: block;}
         .region-card:hover .region-img { transform: scale(1.1); }
 
         /* [상세 페이지] */
-        .detail-container {
-            width: 100%; max-width: 800px; display: flex; flex-direction: column; align-items: center;
-        }
-        .detail-header-img {
-            width: 100%; height: 350px; object-fit: cover; border-radius: 25px; margin-bottom: 30px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15); background-color: #eee;
-        }
-        .info-section {
-            background: white; border-radius: 20px; padding: 30px; width: 100%;
-            box-sizing: border-box; margin-bottom: 25px; box-shadow: var(--card-shadow);
-        }
+        .detail-container { width: 100%; max-width: 800px; display: flex; flex-direction: column; align-items: center; }
+        .detail-header-img { width: 100%; height: 350px; object-fit: cover; border-radius: 25px; margin-bottom: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); background-color: #eee; }
+        .info-section { background: white; border-radius: 20px; padding: 30px; width: 100%; box-sizing: border-box; margin-bottom: 25px; box-shadow: var(--card-shadow); }
         .info-title { font-size: 1.4rem; font-weight: bold; margin-bottom: 20px; border-bottom: 2px solid #f0f0f0; padding-bottom: 15px; color: #333; }
         .info-row { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 1.1rem; }
         .info-label { color: #777; font-weight: 600; }
         .info-val { text-align: right; color: #222; font-weight: 500;}
+
+        /* [NEW! 지도 컨테이너] */
+        #map { height: 300px; width: 100%; border-radius: 15px; margin-bottom: 15px; z-index: 1;}
         
+        /* [NEW! 택시 카드 버튼] */
+        .taxi-btn { width: 100%; padding: 15px; background-color: #f1c40f; color: #333; border: none; border-radius: 15px; font-weight: bold; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: 0.2s;}
+        .taxi-btn:hover { background-color: #f39c12; transform: scale(1.02); }
+
+        /* [NEW! 택시 카드 모달 (팝업)] */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 999; display: flex; justify-content: center; align-items: center; }
+        .taxi-card-modal { background: white; padding: 40px 20px; border-radius: 20px; width: 90%; max-width: 400px; text-align: center; animation: popUp 0.3s ease; }
+        .taxi-card-title { font-size: 1.2rem; color: #666; margin-bottom: 20px; }
+        .taxi-card-text { font-size: 2rem; font-weight: 900; color: #111; line-height: 1.4; word-break: keep-all; margin-bottom: 30px; border: 3px solid #111; padding: 20px; border-radius: 10px;}
+        .taxi-close-btn { background: #333; color: white; border: none; padding: 12px 30px; border-radius: 30px; font-size: 1rem; cursor: pointer; }
+        @keyframes popUp { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
         /* [리뷰] */
-        .review-input-area {
-            display: flex; gap: 10px; margin-bottom: 25px;
-            background: #f1f3f5; padding: 20px; border-radius: 15px;
-        }
+        .review-input-area { display: flex; gap: 10px; margin-bottom: 25px; background: #f1f3f5; padding: 20px; border-radius: 15px; }
         .star-select { padding: 12px; border-radius: 10px; border: 1px solid #ddd; font-size: 1rem; cursor: pointer;}
         .comment-input { flex: 1; padding: 12px; border-radius: 10px; border: 1px solid #ddd; font-size: 1rem;}
         .post-btn { background: #333; color: white; border: none; padding: 0 25px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.2s;}
         .post-btn:hover { background: black; }
-        
         .review-list { list-style: none; padding: 0; margin: 0; }
-        .review-item {
-            background: white; border-bottom: 1px solid #eee; padding: 20px 0;
-            display: flex; flex-direction: column;
-        }
+        .review-item { background: white; border-bottom: 1px solid #eee; padding: 20px 0; display: flex; flex-direction: column; }
         .r-header { display: flex; justify-content: space-between; margin-bottom: 8px; align-items: center;}
         .r-user { font-weight: bold; font-size: 1rem; color: #444; }
         .r-stars { color: #f1c40f; letter-spacing: 2px; }
@@ -160,22 +129,10 @@
                     <img src="https://images.unsplash.com/photo-1538485399081-7191377e8241?auto=format&fit=crop&w=800&q=80" class="region-img">
                     <div class="region-overlay"><span class="region-name" id="rn-seoul">Seoul</span><span class="region-food" id="rf-seoul">Street Food</span></div>
                 </div>
-                <div class="card region-card" onclick="alert('Try Jeolla or Seoul!')">
-                    <img src="https://images.unsplash.com/photo-1534994236353-8d99883de08d?auto=format&fit=crop&w=800&q=80" class="region-img">
-                    <div class="region-overlay"><span class="region-name" id="rn-jeju">Jeju</span><span class="region-food" id="rf-jeju">Black Pork</span></div>
-                </div>
-                 <div class="card region-card" onclick="alert('Gangwon!')">
-                    <img src="https://images.unsplash.com/photo-1528659103852-5c2c7c5952d7?auto=format&fit=crop&w=800&q=80" class="region-img">
-                    <div class="region-overlay"><span class="region-name" id="rn-gangwon">Gangwon</span><span class="region-food" id="rf-gangwon">Tofu</span></div>
-                </div>
-                 <div class="card region-card" onclick="alert('Busan!')">
-                    <img src="https://images.unsplash.com/photo-1629814467204-511598f80459?auto=format&fit=crop&w=800&q=80" class="region-img">
-                    <div class="region-overlay"><span class="region-name" id="rn-busan">Busan</span><span class="region-food" id="rf-busan">Seafood</span></div>
-                </div>
-                 <div class="card region-card" onclick="alert('Chungcheong!')">
-                    <img src="https://images.unsplash.com/photo-1613568770467-33f7c35f2991?auto=format&fit=crop&w=800&q=80" class="region-img">
-                    <div class="region-overlay"><span class="region-name" id="rn-chung">Chungcheong</span><span class="region-food" id="rf-chung">Noodle</span></div>
-                </div>
+                <div class="card region-card" onclick="alert('Try Jeolla or Seoul!')"><img src="https://images.unsplash.com/photo-1534994236353-8d99883de08d?auto=format&fit=crop&w=800&q=80" class="region-img"><div class="region-overlay"><span class="region-name" id="rn-jeju">Jeju</span><span class="region-food" id="rf-jeju">Black Pork</span></div></div>
+                <div class="card region-card" onclick="alert('Gangwon!')"><img src="https://images.unsplash.com/photo-1528659103852-5c2c7c5952d7?auto=format&fit=crop&w=800&q=80" class="region-img"><div class="region-overlay"><span class="region-name" id="rn-gangwon">Gangwon</span><span class="region-food" id="rf-gangwon">Tofu</span></div></div>
+                <div class="card region-card" onclick="alert('Busan!')"><img src="https://images.unsplash.com/photo-1629814467204-511598f80459?auto=format&fit=crop&w=800&q=80" class="region-img"><div class="region-overlay"><span class="region-name" id="rn-busan">Busan</span><span class="region-food" id="rf-busan">Seafood</span></div></div>
+                <div class="card region-card" onclick="alert('Chungcheong!')"><img src="https://images.unsplash.com/photo-1613568770467-33f7c35f2991?auto=format&fit=crop&w=800&q=80" class="region-img"><div class="region-overlay"><span class="region-name" id="rn-chung">Chungcheong</span><span class="region-food" id="rf-chung">Noodle</span></div></div>
             </div>
             <button onclick="goScreen('job')" style="margin-top:40px; padding: 12px 30px; background:none; border:2px solid #ddd; border-radius:30px; cursor:pointer; font-weight:bold; color:#777;">⬅ Back</button>
         </div>
@@ -192,14 +149,20 @@
                     <div class="info-row"><span class="info-label" id="l-budget">Est. Budget</span><span class="info-val" id="d-budget">$150</span></div>
                 </div>
 
+                <div class="info-section">
+                    <div class="info-title" id="t-map-sec">📍 Location & Taxi</div>
+                    
+                    <div id="map"></div>
+                    
+                    <button class="taxi-btn" onclick="showTaxiCard()">
+                        🚕 <span id="t-taxi-btn">Show Address to Driver</span>
+                    </button>
+                </div>
+
                 <div class="info-section review-box">
                     <div class="info-title" id="t-review-title">⭐ Traveler Reviews</div>
                     <div class="review-input-area">
-                        <select id="r-star-input" class="star-select">
-                            <option value="5">⭐⭐⭐⭐⭐</option>
-                            <option value="4">⭐⭐⭐⭐</option>
-                            <option value="3">⭐⭐⭐</option>
-                        </select>
+                        <select id="r-star-input" class="star-select"><option value="5">⭐⭐⭐⭐⭐</option><option value="4">⭐⭐⭐⭐</option><option value="3">⭐⭐⭐</option></select>
                         <input type="text" id="r-text-input" class="comment-input" placeholder="Write a review...">
                         <button class="post-btn" onclick="addReview()">Post</button>
                     </div>
@@ -210,15 +173,30 @@
             </div>
         </div>
 
+        <div id="modal-taxi" class="modal-overlay hidden" onclick="closeTaxiCard(event)">
+            <div class="taxi-card-modal">
+                <div class="taxi-card-title">🚕 Show this to the driver</div>
+                <div class="taxi-card-text" id="d-address-kr">
+                    기사님,<br>여기로 가주세요.
+                </div>
+                <button class="taxi-close-btn" onclick="closeTaxiCard(null)">Close</button>
+            </div>
+        </div>
+
     </div>
 
     <script>
         let currentLang = 'en';
-        let currentRegion = null; // [중요] 현재 보고 있는 지역을 기억하는 변수
+        let currentRegion = null;
+        let map = null; // 지도 객체 담을 변수
+        let marker = null; // 지도 핀 객체
 
+        // [데이터] 좌표(lat, lng)와 한국어 주소(addr) 추가됨
         const regionDB = {
             Jeolla: {
                 img: "https://images.unsplash.com/photo-1552604660-a8c4dde15b2e?auto=format&fit=crop&w=800&q=80",
+                lat: 35.8147, lng: 127.1526, // 전주 한옥마을 좌표
+                addr: "기사님,<br>전주 한옥마을로<br>가주세요.",
                 en: { name:"Jeolla Province", food:"Cockle & Bibimbap", trans:"KTX (3h from Seoul)", bud:"$150 / person" },
                 kr: { name:"전라도 미식여행", food:"벌교 꼬막 & 전주 비빔밥", trans:"KTX (용산역 출발 3시간)", bud:"약 18만원 / 1인" },
                 jp: { name:"全羅道 (チョルラド)", food:"ハイガイ & ビビンバ", trans:"KTX (ソウルから3時間)", bud:"約 18,000円 / 1人" },
@@ -229,6 +207,8 @@
             },
             Seoul: {
                 img: "https://images.unsplash.com/photo-1538485399081-7191377e8241?auto=format&fit=crop&w=800&q=80",
+                lat: 37.5701, lng: 126.9997, // 광장시장 좌표
+                addr: "기사님,<br>광장시장으로<br>가주세요.",
                 en: { name:"Seoul City", food:"Tteokbokki & Galbi", trans:"Subway & Bus", bud:"$80 / person" },
                 kr: { name:"서울 시티 투어", food:"광장시장 떡볶이 & 갈비", trans:"지하철 및 버스", bud:"약 10만원 / 1인" },
                 jp: { name:"ソウル", food:"トッポッキ & カルビ", trans:"地下鉄 & バス", bud:"約 10,000円 / 1人" },
@@ -244,19 +224,22 @@
                   mapT:"Select Region", mapS:"Where will you hunt for flavor?", infoT:"📋 Travel Info & Budget", revT:"⭐ Traveler Reviews",
                   l_food:"Seasonal Food", l_trans:"Transport", l_bud:"Budget", place:"Write a review...",
                   j1:"The Druid", d1:"Nature", j2:"Gourmet Hunter", d2:"Food Trip", j3:"The Bard", d3:"Photo Spots", j4:"The Merchant", d4:"Shopping", j5:"Star Seeker", d5:"K-Wave", j6:"The Nomad", d6:"Local Life",
-                  rn_jeolla:"Jeolla", rf_jeolla:"Bibimbap", rn_seoul:"Seoul", rf_seoul:"Street Food", rn_jeju:"Jeju", rf_jeju:"Black Pork", rn_gangwon:"Gangwon", rf_gangwon:"Tofu", rn_busan:"Busan", rf_busan:"Seafood", rn_chung:"Chungcheong", rf_chung:"Noodle"
+                  rn_jeolla:"Jeolla", rf_jeolla:"Bibimbap", rn_seoul:"Seoul", rf_seoul:"Street Food", rn_jeju:"Jeju", rf_jeju:"Black Pork", rn_gangwon:"Gangwon", rf_gangwon:"Tofu", rn_busan:"Busan", rf_busan:"Seafood", rn_chung:"Chungcheong", rf_chung:"Noodle",
+                  loc:"📍 Location & Taxi", taxi:"Show Address to Driver"
                 },
             kr: { home:"당신만 모르는 진짜 한국.", start:"여행 시작하기 🚀", jobT:"여행 직업 선택", jobS:"당신의 여행 스타일은?", 
                   mapT:"지역 선택", mapS:"어디로 미식 사냥을 떠나시겠습니까?", infoT:"📋 여행 정보 및 경비", revT:"⭐ 여행자 실시간 리뷰",
                   l_food:"제철 음식", l_trans:"교통편", l_bud:"예상 경비", place:"후기를 남겨주세요...",
                   j1:"더 드루이드", d1:"숨겨진 자연", j2:"고메 헌터", d2:"제철 미식 여행", j3:"더 바드", d3:"인생샷 명소", j4:"더 머천트", d4:"쇼핑 & 굿즈", j5:"스타 시커", d5:"한류 성지순례", j6:"더 노마드", d6:"현지인 체험",
-                  rn_jeolla:"전라도", rf_jeolla:"전주 비빔밥", rn_seoul:"서울", rf_seoul:"길거리 음식", rn_jeju:"제주도", rf_jeju:"흑돼지", rn_gangwon:"강원도", rf_gangwon:"초당 순두부", rn_busan:"부산", rf_busan:"해산물", rn_chung:"충청도", rf_chung:"어죽 국수"
+                  rn_jeolla:"전라도", rf_jeolla:"전주 비빔밥", rn_seoul:"서울", rf_seoul:"길거리 음식", rn_jeju:"제주도", rf_jeju:"흑돼지", rn_gangwon:"강원도", rf_gangwon:"초당 순두부", rn_busan:"부산", rf_busan:"해산물", rn_chung:"충청도", rf_chung:"어죽 국수",
+                  loc:"📍 위치 및 택시 주소", taxi:"택시 기사님께 주소 보여주기"
                 },
             jp: { home:"あなただけが知らない韓国。", start:"旅を始める 🚀", jobT:"クラス選択", jobS:"旅行スタイルは？", 
                   mapT:"地域選択", mapS:"どこでグルメ狩りを始めますか？", infoT:"📋 旅行情報 & 予算", revT:"⭐ 旅行者のレビュー",
                   l_food:"旬の食べ物", l_trans:"交通手段", l_bud:"予算", place:"レビューを書いて...",
                   j1:"ドルイド", d1:"隠れた自然", j2:"グルメハンター", d2:"旬の美食の旅", j3:"バード", d3:"映えスポット", j4:"マーチャント", d4:"ショッピング", j5:"スターシーカー", d5:"K-POP聖地", j6:"ノマド", d6:"現地体験",
-                  rn_jeolla:"全羅道", rf_jeolla:"ビビンバ", rn_seoul:"ソウル", rf_seoul:"屋台料理", rn_jeju:"済州島", rf_jeju:"黒豚", rn_gangwon:"江原道", rf_gangwon:"スンドゥブ", rn_busan:"釜山", rf_busan:"海産物", rn_chung:"忠清道", rf_chung:"麺料理"
+                  rn_jeolla:"全羅道", rf_jeolla:"ビビンバ", rn_seoul:"ソウル", rf_seoul:"屋台料理", rn_jeju:"済州島", rf_jeju:"黒豚", rn_gangwon:"江原道", rf_gangwon:"スンドゥブ", rn_busan:"釜山", rf_busan:"海産物", rn_chung:"忠清道", rf_chung:"麺料理",
+                  loc:"📍 位置情報 & タクシー", taxi:"タクシー運転手に見せる"
                 }
         };
 
@@ -264,6 +247,11 @@
             document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
             document.getElementById(`screen-${screenName}`).classList.remove('hidden');
             window.scrollTo(0,0);
+            
+            // 지도가 있는 화면으로 갈 때 사이즈 재조정 (깨짐 방지)
+            if(screenName === 'detail' && map) {
+                setTimeout(() => { map.invalidateSize(); }, 200);
+            }
         }
 
         function setLang(lang, btn) {
@@ -273,7 +261,7 @@
             
             const t = uiDB[lang];
             
-            // 1. 공통 UI 업데이트
+            // UI 업데이트
             document.getElementById('t-home-desc').innerText = t.home;
             document.getElementById('t-start').innerText = t.start;
             document.getElementById('t-job-title').innerText = t.jobT;
@@ -286,8 +274,11 @@
             document.getElementById('l-transport').innerText = t.l_trans;
             document.getElementById('l-budget').innerText = t.l_bud;
             document.getElementById('r-text-input').placeholder = t.place;
+            
+            // [NEW] 지도 섹션 텍스트 번역
+            document.getElementById('t-map-sec').innerText = t.loc;
+            document.getElementById('t-taxi-btn').innerText = t.taxi;
 
-            // 2. 직업/지역 텍스트 업데이트
             for(let i=1; i<=6; i++) {
                 if(document.getElementById(`j${i}`)) document.getElementById(`j${i}`).innerText = t[`j${i}`];
                 if(document.getElementById(`d${i}`)) document.getElementById(`d${i}`).innerText = t[`d${i}`];
@@ -307,7 +298,6 @@
                 document.getElementById('rf-chung').innerText = t.rf_chung;
             }
 
-            // 3. [핵심 수정] 만약 현재 상세 페이지를 보고 있다면, 그 내용도 즉시 번역
             if(currentRegion && !document.getElementById('screen-detail').classList.contains('hidden')) {
                 const rData = regionDB[currentRegion][lang];
                 if(rData) {
@@ -320,7 +310,7 @@
         }
 
         function loadDetail(regionName) {
-            currentRegion = regionName; // [핵심] 현재 선택된 지역 저장
+            currentRegion = regionName;
             const data = regionDB[regionName];
             const t = data[currentLang];
 
@@ -329,54 +319,63 @@
             document.getElementById('d-food').innerText = t.food;
             document.getElementById('d-transport').innerText = t.trans;
             document.getElementById('d-budget').innerText = t.bud;
+            document.getElementById('d-address-kr').innerHTML = data.addr; // 택시 카드 주소 설정
 
             const list = document.getElementById('review-list');
             list.innerHTML = ""; 
-            
             data.reviews.forEach(r => {
                 const li = document.createElement('li');
                 li.className = 'review-item';
                 let stars = "";
                 for(let i=0; i<r.star; i++) stars += "★";
-                
-                li.innerHTML = `
-                    <div class="r-header">
-                        <span class="r-user">👤 ${r.user}</span>
-                        <span class="r-stars">${stars}</span>
-                    </div>
-                    <span class="r-text">${r.text}</span>
-                `;
+                li.innerHTML = `<div class="r-header"><span class="r-user">👤 ${r.user}</span><span class="r-stars">${stars}</span></div><span class="r-text">${r.text}</span>`;
                 list.appendChild(li);
             });
 
             goScreen('detail');
+
+            // [NEW] 지도 초기화 및 이동
+            if (!map) {
+                map = L.map('map').setView([data.lat, data.lng], 14);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(map);
+            } else {
+                map.setView([data.lat, data.lng], 14);
+            }
+
+            // 기존 마커 제거 후 새 마커 추가
+            if (marker) { map.removeLayer(marker); }
+            marker = L.marker([data.lat, data.lng]).addTo(map)
+                .bindPopup("<b>" + regionName + "</b>")
+                .openPopup();
+            
+            // 지도 크기 재조정 (안 깨지게)
+            setTimeout(() => { map.invalidateSize(); }, 200);
+        }
+
+        // [NEW] 택시 카드 열기/닫기
+        function showTaxiCard() {
+            document.getElementById('modal-taxi').classList.remove('hidden');
+        }
+        function closeTaxiCard(event) {
+            if(event === null || event.target.id === 'modal-taxi') {
+                document.getElementById('modal-taxi').classList.add('hidden');
+            }
         }
 
         function addReview() {
             const input = document.getElementById('r-text-input');
             const starSelect = document.getElementById('r-star-input');
             const text = input.value;
-            
-            if(text === "") {
-                alert("Please write a review!");
-                return;
-            }
+            if(text === "") { alert("Please write a review!"); return; }
 
             const list = document.getElementById('review-list');
             const li = document.createElement('li');
             li.className = 'review-item';
-            
             let stars = "";
             for(let i=0; i<starSelect.value; i++) stars += "★";
-
-            li.innerHTML = `
-                <div class="r-header">
-                    <span class="r-user">👤 Me (Just Now)</span>
-                    <span class="r-stars">${stars}</span>
-                </div>
-                <span class="r-text">${text}</span>
-            `;
-            
+            li.innerHTML = `<div class="r-header"><span class="r-user">👤 Me (Just Now)</span><span class="r-stars">${stars}</span></div><span class="r-text">${text}</span>`;
             list.insertBefore(li, list.firstChild);
             input.value = "";
             alert("Review Posted!");
